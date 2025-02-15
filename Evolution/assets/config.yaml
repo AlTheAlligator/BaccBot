@@ -1,0 +1,16 @@
+# Configuration for Baccarat Automation
+
+double_chop_patterns:
+  - [B, P, P, B, P, P]
+  - [P, B, B, P, B, B]
+  - [B, B, P, B, B, P]
+  - [P, P, B, P, P, B]
+  - [P, P, B, B, P, P]
+  - [B, B, P, P, B, B]
+
+thresholds:
+  template_matching: 0.8  # Threshold for template matching
+
+delays:
+  click_duration: 0.2  # Minimum duration for mouse clicks
+  game_check_interval: 1.0  # Interval for checking game state
