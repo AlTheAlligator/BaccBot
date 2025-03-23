@@ -135,7 +135,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-casino-automator-env
+casino-automator-env/
 
 # Spyder project settings
 .spyderproject
@@ -168,12 +168,70 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+# VS Code specific files
+.vscode/
+*.code-workspace
+
 # Ruff stuff:
 .ruff_cache/
 
 # PyPI configuration file
 .pypirc
 
-# Misc
+# Project-specific files and directories
+# Credentials and sensitive information
+Evolution/assets/creds.json
+Simulator/assets/creds.json
+**/credentials.json
+**/client_secret*.json
+**/token.json
+**/token.pickle
+
+# Screenshots and image captures
 Evolution/assets/screenshots/*
 Simulator/assets/screenshots/*
+**/screenshots/
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.bmp
+# Add .gitkeep files to maintain folder structure
+!Evolution/assets/screenshots/.gitkeep
+!Simulator/assets/screenshots/.gitkeep
+
+# Logs
+**/log/
+**/*.log
+# Exception for keeping log directory structure
+!**/log/.gitkeep
+
+# Results and temporary data
+# Keeping results in version control is optional, 
+# but often these files are large and change frequently
+results/*.csv
+# Uncomment the below line if you want to exclude all results
+# results/
+
+# Temporary files
+*.tmp
+temp/
+**/temp/
+*.swp
+*~
+
+# Config files that may contain personal settings
+# Add specific config files here but keep the template/example configs
+**/config.yaml
+**/config.json
+**/settings.json
+# Keep example configs
+!**/config.yaml.example
+!**/config.json.example
+!**/settings.json.example
+
+# OS specific files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
