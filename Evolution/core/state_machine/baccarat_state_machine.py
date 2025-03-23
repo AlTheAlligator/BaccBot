@@ -9,10 +9,11 @@ from core.state_machine.result_states import (
 from core.state_machine.context import StateMachineContext
 
 class BaccaratStateMachine(StateMachine):
-    def __init__(self, stop_event):
+    def __init__(self, stop_event, is_second_shoe=False, initial_drawdown=None):
         self.stop_event = stop_event
-        context = StateMachineContext(stop_event)
-        super().__init__('lobby', context)
+        context = StateMachineContext(stop_event, is_second_shoe, initial_drawdown)
+        initial_state = 'initial_analysis' if is_second_shoe else 'lobby'
+        super().__init__(initial_state, context)
         
     def _create_states(self):
         """Create all state instances with context"""

@@ -1,0 +1,2 @@
+line_index,timestamp,initial_mode,outcomes,bets_placed,wins,losses,ties,profit,duration,end_reason
+0,20250211_095412,BBB,PPPPBPBPBPTPBBBTTTBTPBBBPPBTPBTBPBTPBBBBBBPPPBTBPBBPPBPP,1,0,0,0,0,,error: '>' not supported between instances of 'NoneType' and 'int'

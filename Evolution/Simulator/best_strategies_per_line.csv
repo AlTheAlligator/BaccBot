@@ -1,0 +1,101 @@
+timestamp,initial_mode,outcomes,best_strategy,strategy_parameters,profit,win_rate,number_of_bets
+20250211_095412,BBB,PPPPBPBPBPTPBBBTTTBTPBBBPPBTPBTBPBTPBBBBBBPPPBTBPBBPPBPP,conservative_pattern,"min_confidence=0.7, pattern_length=4, window_size=12, lookback_depth=3",5.75,0.75,13
+20250211_102431,PPP,TBBPBBBBBPPBPBTBBPBTBBT,original,default,5.5,0.7142857142857143,16
+20250211_105142,BBB,PPPBPBBPBPPBBPBPPPPP,confidence_threshold_escalator,"base_threshold=0.5, escalation_factor=0.08, max_threshold=0.85, de_escalation_factor=0.01, pattern_length=5, window_sizes=[8, 16, 32]",5.75,0.75,12
+20250211_111541,PPP,BBBPBBTBBBBPBBPBTPPBBPPBBPPBBPPBBPPBBPBB,streak_reversal_safe_exit,"streak_threshold=2, exit_loss_threshold=3, recovery_period=3, banker_bias=0.52, window_size=15",5.500000000000001,0.6071428571428571,30
+20250211_114547,PPP,BBBBBPPPBTPPPBBBBBPBBPBBTBPBTTTPBPPPBPBPPPPBTPBBPTPPPPPBBBBPBBPBP,loss_aversion,"base_confidence=0.55, recovery_threshold=2, window_size=15, short_window=5",5.800000000000001,0.8,11
+20250211_121900,BBB,PPPPBPBBPPPBTPBBBBBBPBPPBBBPPPBBPBBBBPBBBBBPB,adaptive_bias,"window_size=15, weight_recent=3.5",5.95,0.6,36
+20250211_133412,BBB,BPPPBPPBBPBPPPBTPBPPBBTBPBPPPBBTPTBPPBTBBBPTPBBBBBPPBBTBB,conservative_pattern,"min_confidence=0.7, pattern_length=4, window_size=12, lookback_depth=3",5.8,0.6875,19
+20250211_134901,BBB,PBBBPBPTPBPPPPBBPBBBPBBTTBBPBPPBPBPP,confidence_threshold_escalator,"base_threshold=0.6, escalation_factor=0.07, max_threshold=0.8, de_escalation_factor=0.03, pattern_length=5, window_sizes=[5, 10, 20]",2.6000000000000005,0.5555555555555556,30
+20250211_141512,BBB,PBBPPPPPPBBBPBBBPBPPPTPBPBPTBBPBPBBPPBPPPTPBPTPPBPBBTTBBBB,conservative_pattern,"min_confidence=0.65, pattern_length=4, window_size=10, lookback_depth=3",5.8,1.0,6
+20250211_143652,BBB,PBBPPPPPPBPBBPPBBPBPPBPPBPPBBPBBPBPPBPBBTBBBPPBPP,streak_reversal_safe_exit,"streak_threshold=3, exit_loss_threshold=2, recovery_period=4, banker_bias=0.51, window_size=20",5.3,0.575,41
+20250211_144806,BBB,PPPBPPBPPBPTPBBBBBBBBPBBB,streak_reversal_safe_exit,"streak_threshold=3, exit_loss_threshold=2, recovery_period=4, banker_bias=0.51, window_size=20",5.9,1.0,7
+20250211_153358,PPP,PBBBBBPBBBPBPBTBTBBB,original,default,5.55,0.75,14
+20250211_154059,BBB,BBPPPPBBBPBPPPTPBPPBPTPPP,adaptive_bias,"window_size=10, weight_recent=2.3",5.8,0.75,13
+20250211_160003,BBB,BBPPPPBPBBPBPBPBPBBBBBPBBPBTBPBPPBPBPPPPBPPBPP,conservative_pattern,"min_confidence=0.75, pattern_length=5, window_size=15, lookback_depth=3",5.75,0.8,11
+20250211_162053,PPP,PBBBTBBBBBTBPPPPPPBPPPTBTPPPB,confidence_threshold_escalator,"base_threshold=0.55, escalation_factor=0.05, max_threshold=0.85, de_escalation_factor=0.02, pattern_length=4, window_sizes=[5, 10, 20]",5.75,0.6666666666666666,21
+20250211_164357,PPP,TPBBBBPBBBPBBBPBPPPPBBPPPBBPBPPBPBPBPTBBBBPBPBB,streak_reversal_safe_exit,"streak_threshold=2, exit_loss_threshold=3, recovery_period=3, banker_bias=0.52, window_size=15",5.6499999999999995,0.6153846153846154,26
+20250211_175224,BBB,BPPPPPPPTTBBBBPBBBTBBPTBPPBPTBPBBPPBPPBBTBBP,adaptive_bias,"window_size=10, weight_recent=2.3",5.6000000000000005,0.75,15
+20250211_202615,PPP,BPBBBBTBBBPPBBPBPPPBBTPTPTBBBTPBBBPBPBPPPPBBBTPPPBBPPBPBBB,conservative_pattern,"min_confidence=0.65, pattern_length=4, window_size=10, lookback_depth=3",5.8500000000000005,0.75,14
+20250211_203914,PPP,PPBBBBPBPBBPPPTBPBPBPBTPPPPBPBPPP,adaptive_bias,"window_size=10, weight_recent=2.5",5.699999999999999,0.6666666666666666,20
+20250211_211504,BBB,BTPBPPPBPBPBBPBBPTBPPPBPBTBPBBPPPBPBTPPP,original,default,3.0,0.5483870967741935,34
+20250212_192837,BBB,PPPPBPBBBBBBBBBBBBBBBPPTBBBPPPPBBPPTPP,adaptive_bias,"window_size=10, weight_recent=2.3",5.7,1.0,6
+20250212_195033,PPP,BBPBBBPPPBPBTBBPBBBPBBTBPPBPPBBPPBBPBBPBPPBBPPPPPPTP,loss_aversion,"base_confidence=0.65, recovery_threshold=3, window_size=20, short_window=5",5.800000000000001,0.875,9
+20250212_195850,BBB,PPPBPBPBBPBBBBPBPPTPPBPPP,dynamic_skip,"base_confidence=0.6, risk_threshold=0.4, window_size=15, short_window=5, recovery_factor=0.05",5.75,0.875,8
+20250212_201556,PPP,BBPBBBTBBBPPBBPBPTBTBBPPPBPPPPBPBP,dynamic_skip,"base_confidence=0.6, risk_threshold=0.4, window_size=15, short_window=5, recovery_factor=0.05",5.6499999999999995,0.8,13
+20250212_203801,PPP,BBBBPPBPPPBPPBPBBBPBTPBBBBPPBTPBPPTPPPPBBTBBBPBBTTB,loss_aversion,"base_confidence=0.55, recovery_threshold=2, window_size=15, short_window=5",5.75,0.6875,17
+20250212_205027,BBB,PPPBBPBPBTPBPBPBBTPBPPPPPBBPTTBPPPP,adaptive_bias,"window_size=10, weight_recent=2.3",5.7,0.75,14
+20250214_193310,BBB,PBBTPPPPBPTBBPPPPPPBPP,original,default,6.0,0.75,13
+20250214_195225,PPP,BBBPBBBBPTPPBBBBPTBPBBBPPTTPPBPBPBBPTBB,streak_reversal_safe_exit,"streak_threshold=3, exit_loss_threshold=2, recovery_period=4, banker_bias=0.51, window_size=20",5.75,0.8,11
+20250214_201235,BBB,TPPPPBPBBBPPPPBPPPBBBTBBBPTBBBPBBBTPBPPPBPP,trend_confirmation,"min_confirmations=3, confirmation_threshold=0.7, window_sizes=[8, 16, 30], max_losing_streak=3",5.2,0.6153846153846154,28
+20250214_202149,BBB,PBPPPPBBTTBPBPPBPBBPPBPPPBBPTPP,streak_reversal_safe_exit,"streak_threshold=3, exit_loss_threshold=2, recovery_period=4, banker_bias=0.51, window_size=20",5.8,0.8,12
+20250214_205531,PPP,PBBBPBPPPBBPBBBPPBTTBPTPPBPBPPPBBBPPPPPBBBTBPPPBTPTBTBBBBTBBBBTBBPBB,conservative_pattern,"min_confidence=0.65, pattern_length=4, window_size=10, lookback_depth=3",5.7,0.6875,17
+20250214_211148,BBB,PBPPPBBBBTBBPBPBBBBTBBPPB,risk_parity,"base_risk=0.35, window_size=10, pattern_length=3, recovery_period=2",5.75,1.0,7
+20250214_214521,BBB,BPPPPBPPPPBBBPBPPBPPPPBBBPBPPBPPBPPBBBPBBPBBBTPPPPBBBPBTTTPBPTPPTBPTPP,confidence_threshold_escalator,"base_threshold=0.55, escalation_factor=0.05, max_threshold=0.85, de_escalation_factor=0.02, pattern_length=4, window_sizes=[5, 10, 20]",5.9,0.7142857142857143,14
+20250214_220012,BBB,PBPPPPPBPPPPPBBPBPBPPBPP,original,default,6.0,0.6666666666666666,18
+20250215_222545,PPP,BBBPBTPPPBBPBBPBBBPPPBPBBPBBBTBBPPPBBBTPBBTPPBPTTPPPPBBBPBPBPBBPPBPBBP,adaptive_bias,"window_size=10, weight_recent=2.3",5.750000000000001,0.5614035087719298,62
+20250215_225513,PPP,BBTBPPBBPBBBPBBPBPBBBPTPBBBBPPBBPTPBBPPBBB,risk_parity,"base_risk=0.35, window_size=10, pattern_length=3, recovery_period=2",5.7,0.8,10
+20250216_134602,BBB,PPPBTPPPBBBBBBBPPPBPPBPBBPPBPTBBPBBPPPPPPBTBBBBBBPBPTPBBPBPBPPTBTPP,conservative_pattern,"min_confidence=0.7, pattern_length=4, window_size=12, lookback_depth=3",5.65,0.6153846153846154,28
+20250216_140426,PPP,PBPTBBBBBPBBPTPPPPBPPPPBBPPPBBPPPPBTB,confidence_threshold_escalator,"base_threshold=0.55, escalation_factor=0.05, max_threshold=0.85, de_escalation_factor=0.02, pattern_length=4, window_sizes=[5, 10, 20]",5.8,0.6153846153846154,27
+20250216_152811,BBB,PPPPBPBPBBPPBPPBBBPPPPTPPPPBBPBPBPPP,adaptive_bias,"window_size=10, weight_recent=2.3",5.85,0.65,21
+20250216_165246,BBB,PPPBBPBPPPPBPPBBBBTTPBBPPTPTBPP,original,default,4.9,0.6190476190476191,25
+20250216_183337,PPP,PBBBBBBBBPBBBBPBBTPPPBPPPBBBBPBPPBPPPPBPBBPPBPBPTPBPBBBB,original,default,5.65,0.875,8
+20250216_184733,BBB,BTPPPBPBBPPPPBPTPBBBBPPBPBPBPBBPBBPPPPPP,conservative_pattern,"min_confidence=0.7, pattern_length=4, window_size=12, lookback_depth=3",5.8,1.0,7
+20250216_191435,BBB,BPPPPBPPTBPBBBBBPBBTPPBBBPPBPBBPBPBBBPPBPBTPBPBPPBBPBBPPBPBP,streak_reversal_safe_exit,"streak_threshold=2, exit_loss_threshold=2, recovery_period=3, banker_bias=0.51, window_size=15",5.65,0.6666666666666666,20
+20250216_211619,PPP,BBBTPPBTTBPBBTPBPTPBBBPPBPPBPPPPPPPPBBTPPPBPPTBPPPBBP,streak_reversal_safe_exit,"streak_threshold=2, exit_loss_threshold=2, recovery_period=3, banker_bias=0.51, window_size=15",5.7,0.7142857142857143,18
+20250216_214341,BBB,PBPTPPPPPBPPPPBBBPPPPPBBPBPBTBPPBBBPPPPPPPPPBPPP,original,default,6.0,0.875,8
+20250216_220115,BBB,PBBPPPPBPPTPPBBBPPPPBPBTPPPTP,confidence_threshold_escalator,"base_threshold=0.5, escalation_factor=0.08, max_threshold=0.85, de_escalation_factor=0.01, pattern_length=5, window_sizes=[8, 16, 32]",5.95,0.65,23
+20250216_221059,BBB,PPPBPPPBBPPPBBBBBPPBPBBPBPPP,streak_reversal_safe_exit,"streak_threshold=2, exit_loss_threshold=2, recovery_period=3, banker_bias=0.51, window_size=15",5.8,0.875,8
+20250216_224410,PPP,BPBPBBBBBPBPBBPBBPPBPPPBTTTPPBPBPPBTPPBPPBBPPPPPPBBPBBBPTPPTPPBPBBBBBB,risk_parity,"base_risk=0.35, window_size=10, pattern_length=3, recovery_period=2",5.7,0.8,10
+20250216_225423,BBB,BPPPPPPBBPPPBPBBPPPTPPBBPP,dynamic_skip,"base_confidence=0.7, risk_threshold=0.5, window_size=25, short_window=8, recovery_factor=0.1",5.9,0.8,10
+20250217_102447,BBB,PBBPPPBBPBPBPBBBPBBPBBPBPPPTTBPPPPBPBP,conservative_pattern,"min_confidence=0.75, pattern_length=5, window_size=15, lookback_depth=3",5.8500000000000005,1.0,6
+20250217_103635,BBB,PPBPPPBPTPTTPPBBBPPPBTBBBPBBBPBPBBB,streak_reversal_safe_exit,"streak_threshold=2, exit_loss_threshold=2, recovery_period=3, banker_bias=0.51, window_size=15",5.6000000000000005,0.65,24
+20250217_110502,BBB,PPBPBPBPPBBPTPPBPBPTBBPBPBPPPBBBBBPBPBBBTPBPPBBPBPBBPTPBTPB,confidence_threshold_escalator,"base_threshold=0.55, escalation_factor=0.05, max_threshold=0.85, de_escalation_factor=0.02, pattern_length=4, window_sizes=[5, 10, 20]",5.1499999999999995,0.5625,53
+20250217_113145,BBB,PPPTBPPBPPBBBPPBPPBPPBBPBPBTBPPBBBPPBBTTBBPPBPTBPP,streak_reversal_safe_exit,"streak_threshold=3, exit_loss_threshold=2, recovery_period=4, banker_bias=0.51, window_size=20",5.8500000000000005,0.8,10
+20250217_120853,BBB,BPPPBPPBTBBBBBBTBPPPPTPPPBPPBBBBBBPPPBBBPBPBPBBPPBPBPBBBBPPPPTTPBB,conservative_pattern,"min_confidence=0.7, pattern_length=4, window_size=12, lookback_depth=3",5.75,0.75,14
+20250217_122607,BBB,BPPPPBBTBPBBBTBPPBPTBBBPTPBPPBBBBPBBBBBPBBBPB,conservative_pattern,"min_confidence=0.75, pattern_length=5, window_size=15, lookback_depth=3",5.7,1.0,7
+20250217_125446,PPP,BBBBPBTPBBBBBPPPBPBPBBBPBBTTBPBPPPPPPPPBPPBPBPBBBPBPBPPBBBBTBB,loss_aversion,"base_confidence=0.6, recovery_threshold=1, window_size=10, short_window=4",5.6000000000000005,0.625,27
+20250217_133507,BBB,PPPBBPTTPBBTBPBBTBPPBPPBBBPPBPPBBPPPTPPBTTBBBPB,streak_reversal_safe_exit,"streak_threshold=2, exit_loss_threshold=2, recovery_period=3, banker_bias=0.51, window_size=15",5.699999999999999,0.6666666666666666,22
+20250217_135734,BBB,BPPPPBBBPPPBBBPBPTBPPBPPBTBBPBBBBBBBBBPPBPPTBPBPBTPPP,adaptive_bias,"window_size=15, weight_recent=2.3",5.6,0.6875,17
+20250217_140749,BBB,PPPTPBBBBPBTBBPPPPPPPBTPPP,original,default,5.85,0.6666666666666666,20
+20250217_172013,BBB,PPTPPPBBBTBBPPPBTPPBBBBBBBBBBBBBBBBBPBPPBPPPPBPTBBPBPBPBPBBPP,loss_aversion,"base_confidence=0.55, recovery_threshold=2, window_size=15, short_window=5",5.75,1.0,7
+20250217_173459,BBB,PBPPPPBBBPBPPBPBPBBBBBPPBTBBBPTP,streak_reversal_safe_exit,"streak_threshold=3, exit_loss_threshold=2, recovery_period=4, banker_bias=0.51, window_size=20",5.8,0.8,10
+20250217_175408,PPP,BBBBPBPBPPBPBPTBBBTBPPPBBBPBPBBPTPBBBBTBBPBPBPBBTPB,risk_parity,"base_risk=0.35, window_size=10, pattern_length=3, recovery_period=2",5.550000000000001,0.6666666666666666,20
+20250217_191558,BBB,BBPPPPPBBPBTPPBPPPPTBBTPBBBBBBPPPPBPPBTPBBBBPPPPPP,dynamic_skip,"base_confidence=0.6, risk_threshold=0.4, window_size=15, short_window=5, recovery_factor=0.05",5.8500000000000005,0.7142857142857143,16
+20250217_192812,BBB,PPBPPPPBTBPBBBBPBPBPTP,original,default,3.85,0.6428571428571429,16
+20250217_193953,BBB,BPPPBTPTPTPPBBPBPPPBPPPBPBBBBPPPPPP,original,default,6.0,0.7142857142857143,16
+20250217_205417,BBB,PBPPPPTTBPTPBPBTPBPBTBBPTPTBBBPBBTBPBBBPPTBPBBBBPPBPBPPPBPPBBTB,trend_confirmation,"min_confirmations=3, confirmation_threshold=0.7, window_sizes=[8, 16, 30], max_losing_streak=3",5.25,0.625,32
+20250217_222115,BBB,BPBPPPBPBPPPBBBPBBTBBBBTBBPBBPBPTTPBTBBPBPBPPBBBPPBBBBPBBPPTPPPBBBBBPBP,confidence_threshold_escalator,"base_threshold=0.5, escalation_factor=0.08, max_threshold=0.85, de_escalation_factor=0.01, pattern_length=5, window_sizes=[8, 16, 32]",5.9,1.0,6
+20250219_214449,PPP,BBBBPBBBPPBPPPBPBPPPTPBPTBPPBPPBBPPP,confidence_threshold_escalator,"base_threshold=0.55, escalation_factor=0.06, max_threshold=0.75, de_escalation_factor=0.02, pattern_length=4, window_sizes=[4, 8, 16]",5.85,0.6071428571428571,30
+20250221_222830,BBB,BPPPBPBPTBBBBPPBPBBPTBPPPBPBPBPBTBPPPBBBPPBBBPPPPBPPTBPPBPP,risk_parity,"base_risk=0.35, window_size=10, pattern_length=3, recovery_period=2",5.75,0.875,9
+20250221_224900,BBB,PBPTBPPTBPPPBTPPTPPPPPPP,original,default,6.0,0.8,13
+20250221_230623,PPP,PPBBBBBBBBBPPPPBPBPBBPBB,original,default,5.65,0.75,12
+20250221_233302,BBB,BPPPPBPBBBBPPBPBBBPPPPBPBPBBPPBBPTBPPBPPPTBPPBBPBPBBPBTBPPBPBBTBBP,adaptive_bias,"window_size=10, weight_recent=2.3",5.6000000000000005,0.75,12
+20250221_234727,BBB,PBPPPTPPBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBPPBBBPBBPPPBBTBBPPPBBTBBBBPPTBP,dynamic_skip,"base_confidence=0.55, risk_threshold=0.35, window_size=10, short_window=4, recovery_factor=0.04",5.65,0.75,12
+20250222_001237,PPP,BPBBPBBPBPBPBBBPBBTPTPBBPPBPTBBPBPTBBPBPBPPPBBBBTTBB,conservative_pattern,"min_confidence=0.75, pattern_length=5, window_size=15, lookback_depth=3",5.8500000000000005,1.0,6
+20250222_003930,BBB,PBBTPPPPPPBTPBBPBPPPBPPBBTBBPTBBBTPPBPBPBBBPBTPPPBPPBBBBBBBBBBBPBBP,original,default,6.0,0.6875,17
+20250222_102553,PPP,PBBBPBBBPBBBPPPBTPBPBTBPTBPPPPBPBBPBPBBB,confidence_threshold_escalator,"base_threshold=0.55, escalation_factor=0.06, max_threshold=0.75, de_escalation_factor=0.02, pattern_length=4, window_sizes=[4, 8, 16]",5.6000000000000005,0.6875,18
+20250222_110103,BBB,BPBPPPBPBBBTBPBBBBPBBPBTBTPPPPTPBBBPBBBTTPPBBBPBPPBPPBBBBPPBPBPBBPP,streak_reversal_safe_exit,"streak_threshold=3, exit_loss_threshold=2, recovery_period=4, banker_bias=0.51, window_size=20",6.0,0.574468085106383,53
+20250222_113949,PPP,BBPBBBPTPBPPPPPBBPTPBPBTPTBBTBBPPBBPBBBPBPPTBTPBPPPBPBPBPPPBBPPBPPPT,conservative_pattern,"min_confidence=0.7, pattern_length=4, window_size=12, lookback_depth=3",2.75,0.5714285714285714,24
+20250224_081751,PPP,BBPBPBBBPPTPBBBPPPPBTBBPPPTPBBBBBTTPBBBBPPBTPBTBBBBB,conservative_pattern,"min_confidence=0.7, pattern_length=4, window_size=12, lookback_depth=3",5.9,1.0,6
+20250224_082609,PPP,PBBBBBBPTPPPPPBPPPTPPBPPBBBBB,confidence_threshold_escalator,"base_threshold=0.5, escalation_factor=0.08, max_threshold=0.85, de_escalation_factor=0.01, pattern_length=5, window_sizes=[8, 16, 32]",5.95,0.6875,18
+20250224_084003,PPP,PBPBBBPPBPPTBPPTBBBPBPPBBBPPBBTBPPBBBPBBB,streak_reversal_safe_exit,"streak_threshold=2, exit_loss_threshold=3, recovery_period=3, banker_bias=0.52, window_size=15",5.65,0.65,22
+20250224_090928,BBB,PPPBPBBTBPTBPPPBPBTBTBPBBPBTPBPBPBPPBPBBTPPBPBBPBPBPTPPBBTBPPTBPTBPBPPPP,conservative_pattern,"min_confidence=0.7, pattern_length=4, window_size=12, lookback_depth=3",5.7,0.7142857142857143,16
+20250224_092118,PPP,BBPTBBBPBPPPBBBPBBBBPBPBPBBBPPBBBBTBB,loss_aversion,"base_confidence=0.55, recovery_threshold=2, window_size=15, short_window=5",5.8500000000000005,0.875,8
+20250224_094318,PPP,PBBBBPBTPBPPPBBBBBPBBPTPBBBPPTTBPTPBPTPPPPPBPBPPBPPBBP,loss_aversion,"base_confidence=0.55, recovery_threshold=2, window_size=20, short_window=6",5.750000000000001,0.8,11
+20250224_101019,PPP,PBPBBBBBBPPPPBBBBBBPPBPBTPPBPTPPBBTPBBPPPBPBPBPBPBPPPPPBPBBPPP,conservative_pattern,"min_confidence=0.65, pattern_length=4, window_size=10, lookback_depth=3",5.95,1.0,6
+20250224_103431,BBB,PPBPBPPBPPBPPTBBBBPPBPBPPPBPBPTPPBBTPPPTBPBBBBP,streak_reversal_safe_exit,"streak_threshold=3, exit_loss_threshold=2, recovery_period=4, banker_bias=0.51, window_size=20",5.9,1.0,6
+20250224_105717,PPP,BBBBPBBBBPPPPBPPBTBBPTPPBTPBPPTBBBBBPB,streak_reversal_safe_exit,"streak_threshold=2, exit_loss_threshold=2, recovery_period=3, banker_bias=0.51, window_size=15",5.6000000000000005,0.6363636363636364,26
+20250224_110619,BBB,PPPPPBBPPBTPPBPPPPPPPPBPP,original,default,6.0,0.75,13
+20250224_112406,BBB,BPBPTPPTBTTBBBPPPBBBPBPPBPTBPPPPTPBPBBBBPB,loss_aversion,"base_confidence=0.55, recovery_threshold=2, window_size=15, short_window=5",5.6000000000000005,0.7142857142857143,17
+20250224_114145,BBB,PPPBBPBPBPPPPBPPPTPTBBBPPPBBPPPBBPBPBBBBBBBBPB,original,default,6.0,0.75,13
+20250224_121625,PPP,BBBPPBBPPPBBBPBBTBPPBBBBPTPBPBBPPBPPTPBPBPPPBPPBBPPTPBBBBBPBPBPPPBPB,loss_aversion,"base_confidence=0.55, recovery_threshold=2, window_size=15, short_window=5",5.8500000000000005,1.0,6
+20250224_142929,BBB,PPBPPPPBBPPPBBPBPPBTBPPPPBPPBBBBTPBBBBBBBTBPTPPPPBBBPPBBPPPB,streak_reversal_safe_exit,"streak_threshold=3, exit_loss_threshold=2, recovery_period=4, banker_bias=0.51, window_size=20",5.9,1.0,6
+20250224_145301,BBB,BPPPPPPPTBBBBPTTTBBPBPBPBPBPTPPTBPTPBBBPPBBPPBBBBTB,adaptive_bias,"window_size=15, weight_recent=2.3",5.6,0.7142857142857143,18
+20250224_153139,BBB,PTPPPBPBPBPPBPBTBBPPPBPBPTBTPPBBBPTPPPPBBPBTPBPBPPPBPBPBBPBBBBBPBPPTBBP,conservative_pattern,"min_confidence=0.7, pattern_length=4, window_size=12, lookback_depth=3",4.550000000000001,0.6,27
+20250224_155441,BBB,BBPPPPBPBTPPPTTBPPBBPPBTPPBBTBPBPTPBPBPPBPBBBBPBBBPBP,confidence_threshold_escalator,"base_threshold=0.5, escalation_factor=0.08, max_threshold=0.85, de_escalation_factor=0.01, pattern_length=5, window_sizes=[8, 16, 32]",5.9,0.8,13
+20250224_161341,PPP,BTBPBBBPTPBPBPBBBBPPBPBBBBBPBTBPPPPBBPPP,loss_aversion,"base_confidence=0.65, recovery_threshold=3, window_size=20, short_window=5",5.7,0.75,13
+20250224_162917,BBB,BPPPBPPBBBPPBPBPBPBPBBBBPBBBPPPBBBBBBPBP,adaptive_bias,"window_size=10, weight_recent=3.3",5.7,0.7142857142857143,14
+20250224_165140,BBB,PPPBPBPPBBBPBPTBBPPPTBPBBPPBPBBTBPPPTBPBBPBPPBPPPBPPP,conservative_pattern,"min_confidence=0.7, pattern_length=4, window_size=12, lookback_depth=3",5.8,0.75,12
+20250224_171009,PPP,PBBBBPPPPPBBBBBBBPTBPTTTPBBPBPBBBBTPBPPBBPPBPTB,adaptive_bias,"window_size=15, weight_recent=2.3",5.250000000000001,0.625,28
+20250224_174439,PPP,PBPBBBPBPBBPTBBBPTBBPBPTBPPPBBPPPBBBTPPBBPPPBPBPBPBBPPBPPBBBPPBPPBBP,dynamic_skip,"base_confidence=0.6, risk_threshold=0.4, window_size=15, short_window=5, recovery_factor=0.05",5.7,0.875,9

@@ -1,3 +1,4 @@
+import logging
 from core.interaction import click_button
 from core.screencapture import capture_full_screen
 import cv2
@@ -24,7 +25,7 @@ def get_win_btn_location(threshold=0.8):
         # Return the adjusted game window's coordinates and size
         return (x, y, width, height)
     else:
-        print("Could not locate win button with sufficient confidence.")
+        logging.debug("Could not locate win button with sufficient confidence.")
         return None
 
 def get_tie_btn_location(threshold=0.65):
@@ -38,7 +39,7 @@ def get_tie_btn_location(threshold=0.65):
     if max_val >= threshold:
         x, y = max_loc
 
-        x = x + 5
+        x = x + 10
         y = y + 5
         width = 40
         height = 30
@@ -48,7 +49,7 @@ def get_tie_btn_location(threshold=0.65):
         # Return the adjusted game window's coordinates and size
         return (x, y, width, height)
     else:
-        print("Could not locate tie button with sufficient confidence.")
+        logging.debug("Could not locate tie button with sufficient confidence.")
         return None
     
 def get_loss_btn_location(threshold=0.8):
@@ -72,7 +73,7 @@ def get_loss_btn_location(threshold=0.8):
         # Return the adjusted game window's coordinates and size
         return (x, y, width, height)
     else:
-        print("Could not locate loss button with sufficient confidence.")
+        logging.debug("Could not locate loss button with sufficient confidence.")
         return None
     
 def get_player_start_btn_location(threshold=0.65):
@@ -86,7 +87,7 @@ def get_player_start_btn_location(threshold=0.65):
     if max_val >= threshold:
         x, y = max_loc
     else:
-        print("Could not locate player start button with sufficient confidence.")
+        logging.debug("Could not locate player start button with sufficient confidence.")
         return None
     # Return the adjusted game window's coordinates and size
     x = x + 5
@@ -112,7 +113,7 @@ def get_player_only_btn_location(threshold=0.65):
         if max_val >= threshold:
             x, y = max_loc
         else:
-            print("Could not locate player only button with sufficient confidence.")
+            logging.debug("Could not locate player only button with sufficient confidence.")
             return None
     # Return the adjusted game window's coordinates and size
     x = x + 5
@@ -132,7 +133,7 @@ def get_banker_start_btn_location(threshold=0.65):
     if max_val >= threshold:
         x, y = max_loc
     else:
-        print("Could not locate banker start button with sufficient confidence.")
+        logging.debug("Could not locate banker start button with sufficient confidence.")
         return None
     # Return the adjusted game window's coordinates and size
     x = x + 5
@@ -158,7 +159,7 @@ def get_banker_only_btn_location(threshold=0.65):
         if max_val >= threshold:
             x, y = max_loc
         else:
-            print("Could not locate banker only button with sufficient confidence.")
+            logging.debug("Could not locate banker only button with sufficient confidence.")
             return None
     # Return the adjusted game window's coordinates and size
     x = x + 5
@@ -184,7 +185,7 @@ def get_new_line_btn_location(threshold=0.7):
         # Return the adjusted game window's coordinates and size
         return (x, y, width, height)
     else:
-        print("Could not locate new line button with sufficient confidence.")
+        logging.debug("Could not locate new line button with sufficient confidence.")
         return None
     
 def get_end_line_btn_location(threshold=0.8):
@@ -203,7 +204,7 @@ def get_end_line_btn_location(threshold=0.8):
         _, max_val, _, max_loc = cv2.minMaxLoc(result)
 
         if max_val < threshold:
-            print("Could not locate end line button with sufficient confidence.")
+            logging.debug("Could not locate end line button with sufficient confidence.")
             return None
 
     x, y = max_loc
@@ -232,7 +233,7 @@ def get_reduce_btn_location(threshold=0.8):
         # Return the adjusted game window's coordinates and size
         return (x, y, width, height)
     else:
-        print("Could not locate reduce button with sufficient confidence.")
+        logging.debug("Could not locate reduce button with sufficient confidence.")
         return None
 
 def is_line_done():
@@ -248,26 +249,68 @@ def is_line_done():
     else:
         return False
 
-def press_win_btn():
-    click_button(get_win_btn_location())
+def press_win_btn(retry_until_success=False):
+    coordinates = None
+    if retry_until_success:
+        while coordinates is None:
+            coordinates = get_win_btn_location()
+    else:
+        coordinates = get_win_btn_location()
+    click_button(coordinates)
 
-def press_tie_btn():
-    click_button(get_tie_btn_location())
+def press_tie_btn(retry_until_success=False):
+    coordinates = None
+    if retry_until_success:
+        while coordinates is None:
+            coordinates = get_tie_btn_location()
+    else:
+        coordinates = get_tie_btn_location()
+    click_button(coordinates)
 
-def press_loss_btn():
-    click_button(get_loss_btn_location())
+def press_loss_btn(retry_until_success=False):
+    coordinates = None
+    if retry_until_success:
+        while coordinates is None:
+            coordinates = get_loss_btn_location()
+    else:
+        coordinates = get_loss_btn_location()
+    click_button(coordinates)
 
-def press_player_start_btn():
-    click_button(get_player_start_btn_location())
+def press_player_start_btn(retry_until_success=False):
+    coordinates = None
+    if retry_until_success:
+        while coordinates is None:
+            coordinates = get_player_start_btn_location()
+    else:
+        coordinates = get_player_start_btn_location()
+    click_button(coordinates)
 
-def press_player_only_btn():
-    click_button(get_player_only_btn_location())
+def press_player_only_btn(retry_until_success=False):
+    coordinates = None
+    if retry_until_success:
+        while coordinates is None:
+            coordinates = get_player_only_btn_location()
+    else:
+        coordinates = get_player_only_btn_location()
+    click_button(coordinates)
 
-def press_banker_start_btn():
-    click_button(get_banker_start_btn_location())
+def press_banker_start_btn(retry_until_success=False):
+    coordinates = None
+    if retry_until_success:
+        while coordinates is None:
+            coordinates = get_banker_start_btn_location()
+    else:
+        coordinates = get_banker_start_btn_location()
+    click_button(coordinates)
 
-def press_banker_only_btn():
-    click_button(get_banker_only_btn_location())
+def press_banker_only_btn(retry_until_success=False):
+    coordinates = None
+    if retry_until_success:
+        while coordinates is None:
+            coordinates = get_banker_only_btn_location()
+    else:
+        coordinates = get_banker_only_btn_location()
+    click_button(coordinates)
 
 def press_new_line_btn():
     click_button(get_new_line_btn_location())

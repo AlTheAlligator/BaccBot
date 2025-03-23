@@ -6,6 +6,8 @@ from core.nameless import is_line_done
 import time, random
 from main import setup_logging
 
+from core.gsheets_handler import get_sheet_data
+
 #cube_count, extracted_numbers = extract_cubes_and_numbers(capture_nameless_cubes())
 
 #print(cube_count)
@@ -27,11 +29,13 @@ from main import setup_logging
 #    scroll_lobby("down", 120)
 #    time.sleep(0.1)
 
-from core.state_machine.lobby_states import AnalyzeLobbyState
+#from core.state_machine.lobby_states import AnalyzeLobbyState
 
-setup_logging()
+#setup_logging()
 
-time.sleep(3)
+#time.sleep(3)
 
-state = AnalyzeLobbyState(None)
-print(state.find_lobby_bias())
+#state = AnalyzeLobbyState(None)
+#print(state.find_lobby_bias())
+
+get_sheet_data()

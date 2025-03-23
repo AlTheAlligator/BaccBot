@@ -37,7 +37,7 @@ class HandleResultState(State):
     def execute(self):
         logging.info("State: Handling game result")
         game_result = self.context.game.game_result
-        
+            
         # Add the new result to our stored outcomes
         self.context.game.outcomes.append(game_result)
         
@@ -62,7 +62,7 @@ class CheckEndState(State):
         
     def execute(self):
         logging.info("State: Checking end conditions")
-        if check_for_end_line(self.context, streak_threshold=3, min_profit=-50, use_mini_line_exit=True):
+        if check_for_end_line(self.context, use_mini_line_exit=False, use_moderate_exit=True):
             logging.info("End line condition met")
             return "end_line"
         return "find_bet"
@@ -73,11 +73,22 @@ class EndLineState(State):
         
     def execute(self):
         logging.info("State: Ending line")
-        on_line_finish(self.context.get_total_pnl(), self.context.game.end_line_reason)
+        on_line_finish(self.context.get_total_pnl(), self.context.game.end_line_reason, self.context.game.is_second_shoe)
         self.context.export_line_to_csv()
-        press_end_line_btn()
-        time.sleep(1)
+        
+        # In second shoe mode or natural shoe finish, don't press end_line_btn
+        if not self.context.game.is_second_shoe and self.context.game.end_line_reason != "Shoe finished":
+            press_end_line_btn()
+            time.sleep(1)
+        elif self.context.game.end_line_reason == "Shoe finished":
+            self.context.second_shoe_mode()
+            logging.info("Shoe finished, entering second shoe mode")
+            return "leave_table"
+        elif self.context.game.is_second_shoe:
+            self.context.game.is_second_shoe = False
+            
         press_new_line_btn()
+            
         return "leave_table"
 
 class LeaveTableState(State):
@@ -86,6 +97,13 @@ class LeaveTableState(State):
         
     def execute(self):
         logging.info("State: Leaving table")
+        
+        # If in second shoe mode, exit the program
+        #if self.context.game.is_second_shoe:
+        #    logging.info("Second shoe completed, exiting...")
+        #    self.context.stop_event.set()
+        #    return None
+            
         click_button(get_lobby_btn_coordinates())
         time.sleep(random.uniform(3, 4))
         click_button(get_close_running_game_coordinates())
@@ -106,6 +124,7 @@ class WaitNextGameState(State):
             self._last_move_time = current_time
         
         if game_result != "Waiting for Results":
+            # Always append outcomes as we need them for strategy
             self.context.game.outcomes.append(game_result)
             return "find_bet"
             

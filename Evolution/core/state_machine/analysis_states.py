@@ -16,6 +16,7 @@ class InitialAnalysisState(State):
         
     def execute(self):
         logging.info("State: Initial Analysis")
+        
         # Initialize outcomes if empty
         if not self.context.game.outcomes:
             raw_outcomes = capture_history(True)
@@ -34,6 +35,10 @@ class InitialAnalysisState(State):
         else:
             logging.info("Analysis complete, starting game.")
             self.context.game.update_mode(action)
+            # If second shoe, go straight to finding bets
+            if self.context.game.is_second_shoe:
+                logging.info("Second shoe mode")
+                return "wait_next_game"  # Changed to wait_next_game instead of find_bet to catch next game result
             return "initialize_line"
 
 class InitializeLineState(State):
@@ -43,16 +48,12 @@ class InitializeLineState(State):
     def execute(self):
         logging.info("State: Initialize Line")
         if self.context.game.initial_mode == "PPP":
-            press_banker_start_btn()
-            time.sleep(1)
-            press_tie_btn()
-            time.sleep(1)
-            press_banker_only_btn()
+            press_banker_start_btn(True)
+            press_tie_btn(True)
+            press_banker_only_btn(True)
         else:
-            press_player_start_btn()
-            time.sleep(1)
-            press_tie_btn()
-            time.sleep(1)
-            press_player_only_btn()
+            press_player_start_btn(True)
+            press_tie_btn(True)
+            press_player_only_btn(True)
         
         return "wait_next_game"

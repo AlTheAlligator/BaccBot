@@ -237,13 +237,13 @@ def get_game_result_coordinates(threshold=0.6):
     # Return the adjusted game window's coordinates and size
     return (adjusted_x, adjusted_y, adjusted_width, adjusted_height)
     
-def get_bet_allowed_coordinates(threshold=0.8):
+def get_bet_allowed_coordinates(threshold=0.8, first_run=True):
     global bet_allowed_coordinates
     
     reference = cv2.imread("./assets/templates/bet_allowed.png")
     if bet_allowed_coordinates[0] is None:
         screen = cv2.imread(capture_full_screen())
-        scales=np.linspace(0.8, 1.2, 3)
+        scales = np.linspace(0.9, 1.1, 3)
     else:
         img = Image.open(capture_coordinates(bet_allowed_coordinates))
         if table_match_on_color(np.array(img), {"Allowed": (106, 58, 141), "Not Allowed": (29, 26, 23)}) == "Allowed":
@@ -251,15 +251,13 @@ def get_bet_allowed_coordinates(threshold=0.8):
         else:
             return None
     
-    #screen = preprocess_image(screen)
-    #reference = preprocess_image(reference)
     best_val = 0
     best_loc = None
     for scale in scales:
         resized_reference = cv2.resize(reference, None, fx=scale, fy=scale, interpolation=cv2.INTER_LINEAR)
         if resized_reference.shape[0] > screen.shape[0] or resized_reference.shape[1] > screen.shape[1]:
             scale_factor = min(screen.shape[0] / resized_reference.shape[0], screen.shape[1] / resized_reference.shape[1])
-            resized_reference = cv2.resize(resized_reference, None, fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_AREA)
+            resized_reference = cv2.resize(resized_reference, None, fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_CUBIC)
         result = cv2.matchTemplate(screen, resized_reference, cv2.TM_CCOEFF_NORMED)
     
         _, max_val, _, max_loc = cv2.minMaxLoc(result)
@@ -272,14 +270,17 @@ def get_bet_allowed_coordinates(threshold=0.8):
         print("Could not locate bet allowed with sufficient confidence.")
         return None
     
+    if first_run:
+        get_bet_allowed_coordinates(threshold=0.8, first_run=False)
+
     x, y = best_loc
-    screenshot = pyautogui.screenshot(region=(x-10, y-10, 50, 50))
+    screenshot = pyautogui.screenshot(region=(x-10, y-10, 40, 40))
     screenshot.save("./assets/screenshots/test.png")
     # Recalculate width and height
     adjusted_x = x - 10
     adjusted_y = y - 10
-    adjusted_width = 50
-    adjusted_height = 50
+    adjusted_width = 40
+    adjusted_height = 40
 
     bet_allowed_coordinates = (adjusted_x, adjusted_y, adjusted_width, adjusted_height)
     # Return the adjusted game window's coordinates and size
@@ -371,7 +372,7 @@ def get_banker_bet_coordinates():
     if banker_bet_coordinates[0] is not None:
         return banker_bet_coordinates
     coordinates = get_2000_bet_coordinates()
-    coordinates = (coordinates[0] - 10, coordinates[1] - 170, coordinates[2] + 90, coordinates[3] + 80)
+    coordinates = (coordinates[0] + 10, coordinates[1] - 170, coordinates[2] + 90, coordinates[3] + 80)
     screenshot = pyautogui.screenshot(region=coordinates)
     screenshot.save("./assets/screenshots/banker_btn.png")
     banker_bet_coordinates = coordinates
@@ -382,7 +383,7 @@ def get_player_bet_coordinates():
     if player_bet_coordinates[0] is not None:
         return player_bet_coordinates
     coordinates = get_10_bet_coordinates()
-    coordinates = (coordinates[0] - 10, coordinates[1] - 170, coordinates[2] + 90, coordinates[3] + 80)
+    coordinates = (coordinates[0] + 5, coordinates[1] - 170, coordinates[2] + 90, coordinates[3] + 80)
     screenshot = pyautogui.screenshot(region=coordinates)
     screenshot.save("./assets/screenshots/player_btn.png")
     player_bet_coordinates = coordinates

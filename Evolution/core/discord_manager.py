@@ -1,16 +1,14 @@
 from discord_webhook import DiscordWebhook
 
 def send_discord_notification(message):
-    webhook_url = "https://discord.com/api/webhooks/1336062591239323818/YMnh0ivTI5xUYPwkGU5UH6RHyadjV7nGvR3ARsIhjOUGTzS3Y6i8_aFtRCSXjrGFNwyy"
+    webhook_url = "https://discord.com/api/webhooks/1340721807254356059/VYyHrhaXPqZqHvP88pCKCV5bRLaXkSSqzo8efah67XJYwZjFq2B7OxOnlg_4-YpQWA5a"
     webhook = DiscordWebhook(url=webhook_url, content=message)
     webhook.execute()
 
-def on_line_finish(result, reason):
-    """
-    This function should be called whenever a line finishes.
-    It sends a message to Discord with the result.
-    """
-    message = f"Line finished with result: {result}, because of: {reason}"
+def on_line_finish(profit: float, reason: str, is_second_shoe: bool = False):
+    """Send a Discord message when a line finishes"""
+    shoe_type = "Second shoe" if is_second_shoe else "First shoe"
+    message = f"{shoe_type} finished with {profit}! Reason: {reason}"
     send_discord_notification(message)
 
 def on_error(error):

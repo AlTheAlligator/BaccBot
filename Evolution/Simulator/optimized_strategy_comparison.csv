@@ -1,0 +1,43 @@
+Strategy,Parameters,Description,Total Profit,Avg Profit per Line,Win Rate,Profitable Lines %,Max Drawdown,Avg Consecutive Wins,Avg Consecutive Losses,Avg Win Streak,Avg Loss Streak,Avg Risk-Reward,Sharpe Ratio,Sortino Ratio,Total Lines
+adaptive_bias,"window_size=10, weight_recent=3.4",Best from previous tests,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+adaptive_bias,"window_size=9, weight_recent=3.45",Smaller window for faster adaptation,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+adaptive_bias,"window_size=11, weight_recent=3.35",Slightly larger window for stability,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+adaptive_bias,"window_size=10, weight_recent=3.6",Higher weight for more recency bias,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+adaptive_bias,"window_size=10, weight_recent=3.2",Lower weight for less recency bias,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+adaptive_bias,"window_size=12, weight_recent=3.3",More balanced window/weight ratio,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+hybrid_adaptive,"window_size=11, weight_recent=3.2",Best from previous tests,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+hybrid_adaptive,"window_size=10, weight_recent=3.15",Faster adaptation with moderate weight,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+hybrid_adaptive,"window_size=11, weight_recent=3.25",Slight refinement of best performer,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+hybrid_adaptive,"window_size=12, weight_recent=3.1",Larger window with reduced weight,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+hybrid_adaptive,"window_size=11, weight_recent=2.9",Best window size with lower weight,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+hybrid_adaptive,"window_size=9, weight_recent=3.3",More aggressive with shorter window,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+hybrid_ensemble,"window_sizes=[2, 1, 1], pattern_length=3, streak_threshold=4",Best from previous tests,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+hybrid_ensemble,"window_sizes=[3, 2, 1], pattern_length=3, streak_threshold=3",More balanced window sizes,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+hybrid_ensemble,"window_sizes=[2, 1, 2], pattern_length=4, streak_threshold=4",Increased long-term influence,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+hybrid_ensemble,"window_sizes=[3, 1, 1], pattern_length=3, streak_threshold=4, pattern_weight=0.6",Higher pattern weight,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+hybrid_ensemble,"window_sizes=[2, 2, 1], pattern_length=4, streak_threshold=3",Balanced mid-term influence,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+hybrid_ensemble,"window_sizes=[4, 1, 1], pattern_length=3, streak_threshold=4",Maximum short-term influence,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+enhanced_adaptive_bias,"window_sizes=[5, 10, 20], base_weight_recent=3.4, confidence_threshold=0.6, adaptation_rate=0.15",Balanced configuration,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+enhanced_adaptive_bias,"window_sizes=[3, 7, 15], base_weight_recent=3.6, confidence_threshold=0.55, adaptation_rate=0.2",Shorter windows with faster adaptation,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+enhanced_adaptive_bias,"window_sizes=[8, 15, 30], base_weight_recent=3.2, confidence_threshold=0.65, adaptation_rate=0.1",Longer windows with slower adaptation,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+enhanced_adaptive_bias,"window_sizes=[4, 12, 24], base_weight_recent=3.5, confidence_threshold=0.58, adaptation_rate=0.18",Optimized for medium-length shoes,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+enhanced_adaptive_bias,"window_sizes=[5, 10, 20], base_weight_recent=4.0, confidence_threshold=0.62, adaptation_rate=0.15",Extreme recency bias,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+enhanced_adaptive_bias,"window_sizes=[6, 12, 24], base_weight_recent=3.3, confidence_threshold=0.57, adaptation_rate=0.12",Balanced with slight delay,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+dynamic_skip,"base_confidence=0.6, risk_threshold=0.4, window_size=15, short_window=5, recovery_factor=0.05",Standard balanced approach,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+dynamic_skip,"base_confidence=0.57, risk_threshold=0.35, window_size=12, short_window=4, recovery_factor=0.07",Lower risk threshold for more bets,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+dynamic_skip,"base_confidence=0.65, risk_threshold=0.45, window_size=18, short_window=6, recovery_factor=0.04","Higher confidence requirement, more selective",-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+dynamic_skip,"base_confidence=0.62, risk_threshold=0.38, window_size=15, short_window=5, recovery_factor=0.08",Faster recovery from losses,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+dynamic_skip,"base_confidence=0.58, risk_threshold=0.42, window_size=20, short_window=4, recovery_factor=0.03",Longer window with subtle adjustments,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+dynamic_skip,"base_confidence=0.63, risk_threshold=0.33, window_size=10, short_window=3, recovery_factor=0.06",Very selective with short windows,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+streak_reversal_safe_exit,"streak_threshold=2, exit_loss_threshold=2, recovery_period=3, banker_bias=0.51, window_size=15",Base configuration,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+streak_reversal_safe_exit,"streak_threshold=2, exit_loss_threshold=1, recovery_period=2, banker_bias=0.52, window_size=12",Fast recovery with earlier exit,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+streak_reversal_safe_exit,"streak_threshold=3, exit_loss_threshold=3, recovery_period=4, banker_bias=0.51, window_size=20",Conservative with longer patterns,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+streak_reversal_safe_exit,"streak_threshold=2, exit_loss_threshold=2, recovery_period=4, banker_bias=0.53, window_size=15","Higher banker bias, longer recovery",-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+streak_reversal_safe_exit,"streak_threshold=1, exit_loss_threshold=2, recovery_period=3, banker_bias=0.51, window_size=10",Ultra-responsive with early switches,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+streak_reversal_safe_exit,"streak_threshold=2, exit_loss_threshold=3, recovery_period=2, banker_bias=0.52, window_size=18",High loss tolerance with short recovery,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+confidence_threshold_escalator,"base_threshold=0.55, escalation_factor=0.05, max_threshold=0.85, de_escalation_factor=0.02, pattern_length=4, window_sizes=[5, 10, 20]",Base configuration,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+confidence_threshold_escalator,"base_threshold=0.52, escalation_factor=0.07, max_threshold=0.8, de_escalation_factor=0.03, pattern_length=4, window_sizes=[4, 8, 16]","Lower base, faster adaptation",-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+confidence_threshold_escalator,"base_threshold=0.58, escalation_factor=0.04, max_threshold=0.9, de_escalation_factor=0.01, pattern_length=5, window_sizes=[6, 12, 24]","Higher base, slower adaptation",-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+confidence_threshold_escalator,"base_threshold=0.55, escalation_factor=0.06, max_threshold=0.85, de_escalation_factor=0.03, pattern_length=4, window_sizes=[5, 15, 30]",More emphasis on mid-term,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+confidence_threshold_escalator,"base_threshold=0.53, escalation_factor=0.08, max_threshold=0.75, de_escalation_factor=0.04, pattern_length=3, window_sizes=[4, 8, 16]",Rapid escalation and de-escalation,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131
+confidence_threshold_escalator,"base_threshold=0.6, escalation_factor=0.03, max_threshold=0.95, de_escalation_factor=0.01, pattern_length=6, window_sizes=[8, 16, 32]",Conservative with long patterns,-6550,-50.0,0.0,0.0,-50,0.0,1.0,0.0,1.0,,0,0,131

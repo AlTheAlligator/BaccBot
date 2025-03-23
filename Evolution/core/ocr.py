@@ -1,3 +1,4 @@
+import math
 import cv2
 import pytesseract
 import numpy as np
@@ -37,6 +38,22 @@ def preprocess_image(img, use_otsu=False, use_clahe=False, use_inverse=True):
         thresh = cv2.adaptiveThreshold(
             gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 5
         )
+
+    return thresh
+
+def preprocess_image_v2(img, use_otsu=False, use_clahe=False, use_inverse=True):
+    """
+    Common image preprocessing function for OCR
+    """
+    # Convert to grayscale if image is not already grayscale
+    if len(img.shape) == 3:
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    else:
+        gray = img
+
+    sharpen_kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
+    sharpen = cv2.filter2D(gray, -1, sharpen_kernel)
+    thresh = cv2.threshold(sharpen, 85, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
 
     return thresh
 
@@ -150,7 +167,8 @@ def extract_bet_size(image_path):
     text = text.replace("$", "")  # Remove dollar sign if present
     try:
         bet_size = int(float(text))  # Convert to integer if valid
-        return (bet_size * 10) # Adjust for the actual bet size because of DKK issues
+        #return max(math.ceil(bet_size / 5 * 2), 1) * 10  # Adjust for the actual bet size because of DKK issues
+        return bet_size * 10
     except ValueError:
         return None
 
@@ -162,13 +180,16 @@ def lobby_is_speed_baccarat(screenshot):
     """
     logging.debug("Checking for Speed Baccarat lobby...")
     
-    # Use common preprocessing with CLAHE
-    thresh = preprocess_image(screenshot, use_clahe=True, use_inverse=False)
+    # Use noise removal and smoothing
+    thresh = preprocess_image_v2(screenshot)
     
-    # Resize the cube for better OCR accuracy
+    # Resize the image for better OCR accuracy
     screenshot_resized = cv2.resize(thresh, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
-    text = pytesseract.image_to_string(screenshot_resized, config="--psm 7")
+    # Save screenshot
+    Image.fromarray(screenshot_resized).save("./assets/screenshots/is_speed_baccarat_thresholded.png")
+    text = pytesseract.image_to_string(screenshot_resized, config="--psm 7 --oem 3")
     text = text.strip()
+    #logging.info(f"Detected text: {text}")
 
     if text.upper().startswith("SPEED BACCARAT"):
         logging.debug("Speed Baccarat lobby detected.")

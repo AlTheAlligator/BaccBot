@@ -1,0 +1,2 @@
+Strategy,Parameters,Description,Total Profit,Avg Profit per Line,Win Rate,Profitable Lines %,Max Drawdown,Avg Consecutive Wins,Avg Consecutive Losses,Avg Win Streak,Avg Loss Streak,Avg Risk-Reward,Sharpe Ratio,Sortino Ratio,Total Lines
+adaptive_bias,default,Default parameters,181.74999999999994,1.3980769230769226,52.726178043819694,53.07692307692308,-14.8,5.384615384615385,3.9,5.384615384615385,3.9,1.2016385438444261,0.10379185585039923,0.4245424586262529,130

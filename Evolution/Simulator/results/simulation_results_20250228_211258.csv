@@ -1,0 +1,4 @@
+line_index,timestamp,initial_mode,outcomes,bets_placed,wins,losses,ties,profit,duration,end_reason
+0,20250224_081751,PPP,BBPBPBBBPPTPBBBPPPPBTBBPPPTPBBBBBTTPBBBBPPBTPBTBBBBB,45,19,19,7,182.5,,"decent profit with many bad streaks (150+, 3 streaks)"
+1,20250224_082609,PPP,PBBBBBBPTPPPPPBPPPTPPBPPBBBBB,20,10,8,2,167.5,,"contradicting bias (PPP mode, 72.2% player wins)"
+2,20250224_084003,PPP,PBPBBBPPBPPTBPPTBBBPBPPBBBPPBBTBPPBBBPBBB,31,15,13,3,205.0,,quick profit (200+ in 5 min)

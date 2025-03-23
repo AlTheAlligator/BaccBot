@@ -22,7 +22,8 @@ class LobbyState(State):
     def execute(self):
         """Execute the lobby state's logic"""
         logging.info("State: Accessing the lobby")
-        self.context.reset_table()
+        if not self.context.game.is_second_shoe:
+            self.context.reset_table()
         
         # Click lobby buttons
         click_button(get_games_button_coordinates())
@@ -32,6 +33,12 @@ class LobbyState(State):
         
         # Find and analyze tables
         self.context.game.bias = find_lobby_bias()
+        if self.context.game.is_second_shoe:
+            if self.context.game.bias == "P":
+                logging.info("Exiting: Bias is Player in second shoe.")
+                exit()
+            else:
+                self.context.game.bias = "B"
         table = None
         while table is None:
             table = self.find_suitable_table(self.context.game.bias)

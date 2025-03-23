@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Optional, Tuple, List
 from datetime import datetime
+from core.gsheets_handler import write_result_line
 from core.bet_manager import BetManager, Bet
 from threading import Event
 import logging
@@ -18,7 +19,10 @@ class GameContext:
     game_result: str = ""
     end_line_reason: str = ""
     bias: str = ""
-    outcomes: List[str] = field(default_factory=list)  # Store the outcomes here
+    outcomes: List[str] = field(default_factory=list)
+    first_shoe_outcomes: List[str] = field(default_factory=list)
+    first_shoe_drawdown: float = 0.0
+    is_second_shoe: bool = False
 
     def update_mode(self, new_mode: str):
         """Updates the current mode and initial mode if not set"""
@@ -54,10 +58,15 @@ class TableContext:
 
 class StateMachineContext:
     """Main context object that holds all state machine context"""
-    def __init__(self, stop_event: Event):
+    def __init__(self, stop_event: Event, is_second_shoe: bool = False, initial_drawdown: float = None):
         self.stop_event = stop_event
-        self.game = GameContext()
+        self.game = GameContext(is_second_shoe=is_second_shoe)
         self.table = TableContext()
+        
+        # Initialize bet manager with initial drawdown for second shoe
+        if is_second_shoe and initial_drawdown is not None:
+            self.table.bet_manager = BetManager(initial_pnl=initial_drawdown)
+            self.table.line_start_time = datetime.now()
 
     def create_bet(self, side: str, size: float) -> Bet:
         """Creates a new bet and adds it to the bet manager"""
@@ -70,6 +79,10 @@ class StateMachineContext:
 
     def get_total_pnl(self) -> float:
         """Gets the total profit/loss from the bet manager"""
+        return self.table.bet_manager.get_total_pnl() / 2 * 5 if self.table.bet_manager else 0.0
+
+    def get_total_pnl_DKK(self) -> float:
+        """Gets the total profit/loss from the bet manager in DKK"""
         return self.table.bet_manager.get_total_pnl() if self.table.bet_manager else 0.0
 
     def export_bets_to_csv(self):
@@ -93,25 +106,56 @@ class StateMachineContext:
         self.game.bias = ""
         self.game.outcomes = []  # Reset outcomes when switching tables
 
+    def second_shoe_mode(self):
+        """Switch to second shoe mode"""
+        self.game.is_second_shoe = True
+        self.game.current_mode = self.game.initial_mode
+        self.game.current_bet = None
+        self.game.last_bet = None
+        self.game.game_result = ""
+        self.game.end_line_reason = ""
+        self.game.first_shoe_outcomes = self.game.outcomes.copy()
+        self.game.outcomes = []  # Reset outcomes when switching tables
+        self.game.first_shoe_drawdown = self.get_total_pnl()
+
     def export_line_to_csv(self):
         """Exports the finished line data to a CSV file"""
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         file_path = "results/finished_lines.csv"
         
         # Get first 6 from stored outcomes
-        first_6 = get_first_6_non_ties(self.game.outcomes)
+        if self.game.is_second_shoe:
+            first_6 = get_first_6_non_ties(self.game.first_shoe_outcomes)
+        else:
+            first_6 = get_first_6_non_ties(self.game.outcomes)
         first_6_str = ''.join(first_6) if first_6 else ''
         
-        # Prepare the line data
-        line_data = {
-            'timestamp': timestamp,
-            'initial_mode': self.game.initial_mode,
-            'end_line_reason': self.game.end_line_reason,
-            'bias': self.game.bias,
-            'first_6_outcomes': first_6_str,
-            'profit': self.get_total_pnl(),
-            'all_outcomes': ''.join(self.game.outcomes)
-        }
+        if self.game.is_second_shoe:
+            # Prepare the line data
+            line_data = {
+                'timestamp': timestamp,
+                'duration': round((datetime.now() - self.table.line_start_time).total_seconds() / 60),
+                'initial_mode': self.game.initial_mode,
+                'end_line_reason': self.game.end_line_reason,
+                'bias': self.game.bias,
+                'first_6_outcomes': first_6_str,
+                'profit': self.get_total_pnl(),
+                'all_outcomes_first_shoe': ''.join(self.game.first_shoe_outcomes),
+                'all_outcomes_second_shoe': ''.join(self.game.outcomes)
+            }
+        else:
+            # Prepare the line data
+            line_data = {
+                'timestamp': timestamp,
+                'duration': round((datetime.now() - self.table.line_start_time).total_seconds() / 60),
+                'initial_mode': self.game.initial_mode,
+                'end_line_reason': self.game.end_line_reason,
+                'bias': self.game.bias,
+                'first_6_outcomes': first_6_str,
+                'profit': self.get_total_pnl(),
+                'all_outcomes_first_shoe': ''.join(self.game.outcomes),
+                'all_outcomes_second_shoe': ''
+            }
         
         # Create file with headers if it doesn't exist
         file_exists = os.path.exists(file_path)
@@ -122,3 +166,5 @@ class StateMachineContext:
             if not file_exists:
                 writer.writeheader()
             writer.writerow(line_data)
+
+        write_result_line(self)

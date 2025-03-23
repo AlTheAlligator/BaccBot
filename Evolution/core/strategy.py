@@ -3,7 +3,7 @@ from datetime import datetime
 import logging
 from core.ocr import extract_cubes_and_numbers
 from core.screencapture import capture_nameless_cubes
-from core.nameless import press_banker_only_btn, press_player_only_btn, is_line_done
+from core.nameless import press_banker_only_btn, press_player_only_btn, is_line_done, press_reduce_btn
 
 CHIP_SIZES = [
     2000,
@@ -29,13 +29,13 @@ def get_first_6_non_ties(outcomes):
 
 def get_last_6_without_ties(outcomes):
     """
-    Get the last 6 Player (P) or Banker (B) outcomes, ignoring ties (T).
+    Get the last 7 Player (P) or Banker (B) outcomes, ignoring ties (T).
     
     Args:
     - outcomes: List of outcomes (e.g., ['P', 'B', 'T', 'P', 'B', 'B', 'T']).
     
     Returns:
-    - List of the last 6 non-tie outcomes.
+    - List of the last 7 non-tie outcomes.
     """
     non_tie_outcomes = [outcome for outcome in outcomes if outcome in ['P', 'B']]
     return non_tie_outcomes[-6:]
@@ -114,12 +114,12 @@ def analyze_first_6(outcomes, bias, skip_above_games = 10):
         return "Skip"  # Skip the shoe
     if player_count in [4, 5]:
         if bias != "B":
-            if has_streaks_threshold_hit(get_first_6_non_ties(outcomes), "PPP", 1):
-                return "BBB"
+            #if has_streaks_threshold_hit(get_first_6_non_ties(outcomes), "PPP", 1):
+            return "BBB"
     if banker_count in [4, 5]:
         if bias != "P":
-            if has_streaks_threshold_hit(get_first_6_non_ties(outcomes), "BBB", 1):
-                return "PPP"
+            #if has_streaks_threshold_hit(get_first_6_non_ties(outcomes), "BBB", 1):
+            return "PPP"
     logging.info("No pattern detected. Skipping...")
     return "Skip"  # Default to skipping if no valid mode
 
@@ -311,25 +311,125 @@ def get_streaks(outcomes, mode):
             in_a_row = 0
         
     return streaks
-def check_for_end_line(context, streak_threshold = 3, min_profit = -50, use_mini_line_exit = False, use_moderate_exit = False):
+
+def detect_bad_cadence(context):
+    """
+    Detect bad cadence patterns based on actual bet results from bet manager.
+    
+    Args:
+    - context: The game context containing bet_manager
+    
+    Returns:
+    - (int): Severity level of bad cadence (0 = none, 1 = mild, 2 = severe)
+    """
+    bets = context.table.bet_manager.get_all_bets()
+    if len(bets) < 6:
+        return 0
+    
+    # Bad cadence rule 1: Get consecutive losses and recent loss density
+    max_consecutive, number_of_bad_streaks = get_consecutive_actual_losses_above_threshold(bets, 6)
+    if number_of_bad_streaks >= 1:
+        if number_of_bad_streaks >= 3:
+            return 2
+        elif number_of_bad_streaks >= 1 and max_consecutive >= 10:
+            return 2
+        elif number_of_bad_streaks >= 1:
+            return 1
+    
+    # Bad cadence rule 2: Check for back-to-back opposite streaks
+    if check_back_to_back(context):
+        return 1
+    
+    return 0
+
+def get_consecutive_actual_losses_above_threshold(bets, threshold):
+    """
+    Get the maximum number of consecutive losses from actual bet results.
+    
+    Args:
+    - bets: List of Bet objects from bet_manager
+    
+    Returns:
+    - (int): Maximum consecutive losses
+    """
+    current_streak = 0
+    max_streak = 0
+    number_of_bad_streaks = 0
+    
+    for bet in bets:
+        if bet.result == 'L':
+            current_streak += 1
+            max_streak = max(max_streak, current_streak)
+        elif bet.result == 'W':  # Reset on win, but not on tie
+            current_streak = 0
+        if current_streak > 0 and current_streak % threshold == 0:
+            number_of_bad_streaks += 1
+            
+    return max_streak, number_of_bad_streaks
+
+def check_back_to_back(context):
+    """
+    Check for back-to-back opposite streaks in the last 12 bets.
+    
+    Args:
+    - bets: List of Bet objects from bet_manager
+    Returns:
+    - (bool): True if back-to-back opposite streaks are found, False otherwise
+    """
+    outcomes = get_outcomes_without_ties(context.game.outcomes)
+
+    if len(outcomes) < 7:
+        return False
+    
+    last_7 = outcomes[-7:]
+    if context.game.initial_mode == "PPP":
+        if last_7 == ["P", "P", "P", "B", "P", "P", "P"]:
+            return True
+    elif context.game.initial_mode == "BBB":
+        if last_7 == ["B", "B", "B", "P", "B", "B", "B"]:
+            return True
+    
+    return False
+
+def check_for_end_line(context, use_mini_line_exit = False, use_moderate_exit = False, is_simulation = False):
     if is_line_done():
         context.game.end_line_reason = "nameless built-in line end"
         return True
     
     current_pnl = context.get_total_pnl()
+    
+    # If max drawdown reached, end line
     if current_pnl <= -4000:
         context.game.end_line_reason = "max drawdown reached (-4000)"
         return True
-    
+
     cube_count, extracted_numbers = extract_cubes_and_numbers(capture_nameless_cubes())
-    if current_pnl >= min_profit and bad_streaks_threshold_hit(context, streak_threshold):
+    # General rule 1: If only 1 cube value left higher than 100 and in profit, end line
+    if cube_threshold_hit(1, 100, 1, cube_count=cube_count, extracted_numbers=extracted_numbers) and current_pnl >= 0:
+        context.game.end_line_reason = "only 1 cube value left, higher than 100 and in profit"
+        return True
+    
+    # General rule 2: If only 1 cube value left lower than 20, end line
+    if cube_threshold_hit(20, 1000, 1, cube_count=cube_count, extracted_numbers=extracted_numbers):
+        context.game.end_line_reason = "only 1 cube value left, lower than 20"
+        return True
+    
+    # General rule 3: If only 1 cube value left higher than 10, always hit reduce
+    if cube_threshold_hit(1, 10, 1, cube_count=cube_count, extracted_numbers=extracted_numbers):
+        press_reduce_btn()
+        cube_count, extracted_numbers = extract_cubes_and_numbers(capture_nameless_cubes())
+
+    # General rule 4: If you have hit 3 or more bad streaks and are in profit, end line
+    if not is_simulation and current_pnl >= -50 and bad_streaks_threshold_hit(context, 3) and cube_count <= 4:
         if cube_threshold_hit(50, 50, 3, cube_count=cube_count, extracted_numbers=extracted_numbers):
             context.game.end_line_reason = "3+ bad streak, at least -50 profit and less than 3 cubes"
             return True
-    if cube_threshold_hit(10, 100, 1, cube_count=cube_count, extracted_numbers=extracted_numbers):
-        context.game.end_line_reason = "only 1 cube value left, lower than 10 or higher than 100 detected"
-        return True
     
+    if context.game.is_second_shoe:
+        if check_for_second_shoe_exit(context, cube_count, extracted_numbers):
+            return True
+        return False
+
     if use_mini_line_exit:
         if check_for_mini_line_exit(context, cube_count, extracted_numbers):
             return True
@@ -337,9 +437,17 @@ def check_for_end_line(context, streak_threshold = 3, min_profit = -50, use_mini
     if use_moderate_exit:
         if check_for_moderate_exit(context, cube_count, extracted_numbers):
             return True
-    
+
     return False
-    
+
+def check_for_second_shoe_exit(context, cube_count, extracted_numbers):
+    # Second shoe rule 1: If in profit or only 1 cube left, exit.
+    if cube_count <= 1 or context.get_total_pnl() >= 150:
+        context.game.end_line_reason = "only 1 cube left or in profit"
+        return True
+
+    return False
+
 def check_for_mini_line_exit(context, cube_count, extracted_numbers):
     start_time = context.table.line_start_time
     duration_minutes = (datetime.now() - start_time).total_seconds() / 60
@@ -398,13 +506,63 @@ def check_for_mini_line_exit(context, cube_count, extracted_numbers):
     
     return False
 
-def check_for_moderate_exit(context):
+def check_for_moderate_exit(context, cube_count, extracted_numbers):
     pnl = context.get_total_pnl()
     outcomes_no_ties = get_outcomes_without_ties(context.game.outcomes)
     streaks = get_streaks(outcomes_no_ties, context.game.initial_mode)
 
-    # If 150+ profit and 3 bad streaks, exit.
+    # Smart to utilize: If the first 5 games are all wins, exit.
+    if len(context.table.bet_manager.get_all_bets()) >= 5 and all(bet.result == 'W' for bet in context.table.bet_manager.get_all_bets()[:5]):
+        context.game.end_line_reason = "first 5 games all wins"
+        return True
+    
+    # Moderate rule 1: Check for cadence being off in the first 25 games
+    if len(outcomes_no_ties) <= 25:
+        cadence_severity = detect_bad_cadence(context)
+        
+        if cadence_severity > 0:
+            if pnl >= 150:
+                context.game.end_line_reason = "bad cadence detected - taking profit"
+                return True
+            elif cadence_severity == 2:  # Severe bad cadence
+                if pnl >= -100:  # Allow slight loss for severe cases
+                    context.game.end_line_reason = "severe bad cadence - limiting loss"
+                    return True
+
+    # Moderate rule 2: If 1-3 cubes left after 2 or more bad streaks, exit.
+    if streaks >= 2:
+        if cube_count <= 3:
+            context.game.end_line_reason = "few cubes with bad streaks (2+ streaks)"
+            return True
+        
+    # Moderate rule 3: If 3+ bad streaks and profit, exit.
     if streaks >= 3:
         if pnl >= 150:
             context.game.end_line_reason = "decent profit with many bad streaks (150+, 3 streaks)"
             return True
+    
+    # Check for contradicting bias after game 16
+    if len(outcomes_no_ties) >= 16:
+        # Get outcomes after game 6
+        post_initial_outcomes = outcomes_no_ties[6:]
+        player_count = post_initial_outcomes.count('P')
+        banker_count = post_initial_outcomes.count('B')
+        total_games = len(post_initial_outcomes)
+        
+        # Calculate percentages
+        banker_percentage = (banker_count / total_games) * 100
+        player_percentage = (player_count / total_games) * 100
+        
+        # Check if bias contradicts our initial mode with 60% threshold
+        if context.game.initial_mode == "BBB" and banker_percentage >= 60:
+            logging.info(f"Contradicting bias detected: BBB mode but {banker_percentage:.1f}% banker wins after game 6")
+            if pnl >= 150:
+                context.game.end_line_reason = f"contradicting bias (BBB mode, {banker_percentage:.1f}% banker wins)"
+                return True
+        elif context.game.initial_mode == "PPP" and player_percentage >= 60:
+            logging.info(f"Contradicting bias detected: PPP mode but {player_percentage:.1f}% player wins after game 6")
+            if pnl >= 150:
+                context.game.end_line_reason = f"contradicting bias (PPP mode, {player_percentage:.1f}% player wins)"
+                return True
+    
+    return False

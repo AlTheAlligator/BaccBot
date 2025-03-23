@@ -38,46 +38,41 @@ class Bet:
         return asdict(self)
 
 class BetManager:
-    def __init__(self):
-        self._line_start_time = datetime.now()
-        self._bets: List[Bet] = []
-        self._lock = threading.Lock()  # Lock to ensure thread-safety
-
-    def add_bet(self, bet: Bet):
-        """Safely add a bet to the history."""
-        with self._lock:
-            self._bets.append(bet)
-            logging.info(f"Bet added: {bet.to_dict()}")
-
-    def get_all_bets(self) -> List[Bet]:
-        """Return a copy of the bet list to avoid external modification."""
-        with self._lock:
-            return list(self._bets)
-
-    def get_total_pnl(self) -> float:
-        """Calculate the total profit/loss."""
-        with self._lock:
-            return sum(bet.pnl for bet in self._bets)
+    """Manages bets and calculates PNL"""
+    def __init__(self, initial_pnl: float = 0.0):
+        self.bets = []
+        self._pnl = initial_pnl
         
+    def add_bet(self, bet):
+        """Add a bet to the list of bets"""
+        self.bets.append(bet)
+        
+    def get_all_bets(self):
+        """Return all bets"""
+        return self.bets
+        
+    def get_total_pnl(self):
+        """Calculate total PNL from all bets"""
+        bet_pnl = sum(bet.pnl for bet in self.bets)
+        return round(bet_pnl + self._pnl, 2)  # Include initial PNL from first shoe
+
     def get_bet_start_time(self) -> datetime:
         """Return the time when the current line started."""
         return self._line_start_time
 
     def get_number_of_ties(self) -> int:
         """Return the number of ties in the bet history."""
-        with self._lock:
-            return sum(1 for bet in self._bets if bet.result == "T")
+        return sum(1 for bet in self.bets if bet.result == "T")
 
     def export_to_csv(self, file_path: str):
         """Export all bets to a CSV file."""
-        with self._lock:
-            if not self._bets:
-                logging.warning("No bets to export.")
-                return
-            with open(file_path, mode='w', newline='') as file:
-                fieldnames = ['side', 'size', 'result', 'pnl']
-                writer = csv.DictWriter(file, fieldnames=fieldnames)
-                writer.writeheader()
-                for bet in self._bets:
-                    writer.writerow(bet.to_dict())
-            logging.info(f"Bets exported to {file_path}")
+        if not self.bets:
+            logging.warning("No bets to export.")
+            return
+        with open(file_path, mode='w', newline='') as file:
+            fieldnames = ['side', 'size', 'result', 'pnl']
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            for bet in self.bets:
+                writer.writerow(bet.to_dict())
+        logging.info(f"Bets exported to {file_path}")
