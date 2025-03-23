@@ -175,4 +175,5 @@ cython_debug/
 .pypirc
 
 # Misc
-/Evolution/assets/screenshots/
+Evolution/assets/screenshots/*
+Simulator/assets/screenshots/*
