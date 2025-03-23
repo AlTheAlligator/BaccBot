@@ -23,6 +23,8 @@ class GameContext:
     first_shoe_outcomes: List[str] = field(default_factory=list)
     first_shoe_drawdown: float = 0.0
     is_second_shoe: bool = False
+    cube_count: int = 0
+    cube_values: List[int] = field(default_factory=list)
 
     def update_mode(self, new_mode: str):
         """Updates the current mode and initial mode if not set"""
@@ -58,10 +60,12 @@ class TableContext:
 
 class StateMachineContext:
     """Main context object that holds all state machine context"""
-    def __init__(self, stop_event: Event, is_second_shoe: bool = False, initial_drawdown: float = None):
+    def __init__(self, stop_event: Event, is_second_shoe: bool = False, initial_drawdown: float = None, test_mode: bool = False):
         self.stop_event = stop_event
         self.game = GameContext(is_second_shoe=is_second_shoe)
         self.table = TableContext()
+        self.test_mode = test_mode
+        self.game_counter = 0
         
         # Initialize bet manager with initial drawdown for second shoe
         if is_second_shoe and initial_drawdown is not None:
@@ -79,6 +83,7 @@ class StateMachineContext:
 
     def get_total_pnl(self) -> float:
         """Gets the total profit/loss from the bet manager"""
+        return self.table.bet_manager.get_total_pnl() if self.table.bet_manager else 0.0
         return self.table.bet_manager.get_total_pnl() / 2 * 5 if self.table.bet_manager else 0.0
 
     def get_total_pnl_DKK(self) -> float:
@@ -166,5 +171,5 @@ class StateMachineContext:
             if not file_exists:
                 writer.writeheader()
             writer.writerow(line_data)
-
-        write_result_line(self)
+        
+        # Google Sheets export is now handled directly in EndLineState

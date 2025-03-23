@@ -6,8 +6,10 @@ from core.interaction import random_mouse_move, click_button
 from core.evolution import get_game_result_wrapper
 from core.strategy import check_for_end_line
 from core.nameless import press_new_line_btn, press_win_btn, press_loss_btn, press_tie_btn, press_end_line_btn
-from core.screencapture import get_lobby_btn_coordinates, get_close_running_game_coordinates
+from core.screencapture import get_lobby_btn_coordinates, get_close_running_game_coordinates, capture_nameless_cubes
 from core.discord_manager import on_line_finish
+from core.ocr import extract_cubes_and_numbers
+from core.gsheets_handler import write_result_line
 
 class WaitResultState(State):
     def __init__(self, name: str, context):
@@ -41,6 +43,11 @@ class HandleResultState(State):
         # Add the new result to our stored outcomes
         self.context.game.outcomes.append(game_result)
         
+        # Increment game counter in test mode
+        if self.context.test_mode:
+            self.context.game_counter += 1
+            logging.info(f"Test mode: Game count {self.context.game_counter}")
+        
         if game_result == self.context.game.current_bet.side:
             logging.info("Result: Win")
             press_win_btn()
@@ -62,6 +69,7 @@ class CheckEndState(State):
         
     def execute(self):
         logging.info("State: Checking end conditions")
+        logging.info(f"PNL: {self.context.get_total_pnl()} with {len(self.context.table.bet_manager.get_all_bets())} bets")
         if check_for_end_line(self.context, use_mini_line_exit=False, use_moderate_exit=True):
             logging.info("End line condition met")
             return "end_line"
@@ -73,17 +81,30 @@ class EndLineState(State):
         
     def execute(self):
         logging.info("State: Ending line")
+        # Store cube count before ending the line if the shoe is finished
+        if self.context.game.end_line_reason == "Shoe finished":
+            cube_count, extracted_numbers = extract_cubes_and_numbers(capture_nameless_cubes())
+            self.context.game.cube_count = cube_count
+            self.context.game.cube_values = extracted_numbers
+            logging.info(f"Stored cube count before ending line: {cube_count}, values: {extracted_numbers}")
+            # Store first shoe drawdown for reference
+            self.context.game.first_shoe_drawdown = self.context.get_total_pnl()
+        
         on_line_finish(self.context.get_total_pnl(), self.context.game.end_line_reason, self.context.game.is_second_shoe)
         self.context.export_line_to_csv()
         
-        # In second shoe mode or natural shoe finish, don't press end_line_btn
+        # Write results to Google Sheets
+        write_result_line(self.context)
+        
+        # In natural shoe finish, start a new shoe instead of going to second shoe mode
         if not self.context.game.is_second_shoe and self.context.game.end_line_reason != "Shoe finished":
             press_end_line_btn()
             time.sleep(1)
         elif self.context.game.end_line_reason == "Shoe finished":
-            self.context.second_shoe_mode()
-            logging.info("Shoe finished, entering second shoe mode")
-            return "leave_table"
+            # Start a new shoe instead of entering second shoe mode
+            logging.info("Shoe finished, starting a new shoe")
+            # Reset for new shoe
+            self.context.reset_table()
         elif self.context.game.is_second_shoe:
             self.context.game.is_second_shoe = False
             

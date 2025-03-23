@@ -6,6 +6,8 @@ import pyautogui
 from PIL import Image
 import time
 import random
+import os
+from pathlib import Path
 from core.strategy import analyze_first_6, analyze_first_6_rule, analyze_bias, get_outcomes_without_not_played, get_outcomes_without_ties
 from core.interaction import scroll_lobby
 from core.ocr import lobby_is_speed_baccarat
@@ -176,11 +178,19 @@ def non_maximum_suppression(boxes, overlap_threshold=0.5):
     
     return boxes[keep].tolist()
 
+def ensure_directory_exists(file_path):
+    """Ensure the directory exists for a given file path"""
+    directory = os.path.dirname(file_path)
+    if directory and not os.path.exists(directory):
+        Path(directory).mkdir(parents=True, exist_ok=True)
+    return file_path
+
 def save_debug_image_with_boxes(screenshot, table_boxes, output_path="./assets/screenshots/debug_detected_tables.png"):
     """Save debug image with detected table boxes"""
     debug_image = screenshot.copy()
     for (x, y, w, h) in table_boxes:
         cv2.rectangle(debug_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    output_path = ensure_directory_exists(output_path)
     cv2.imwrite(output_path, debug_image)
 
 def extract_table_histories(screenshot, table_boxes, check_for_speed_baccarat=True):
@@ -241,6 +251,9 @@ def history_template_match(cropped_img, grid_size=(6, 36)):
     x_offset = 0
     y_offset = 0
 
+    # Ensure the lobby_cells directory exists
+    ensure_directory_exists("./assets/screenshots/lobby_cells/")
+
     outcomes = []
     for col in range(grid_size[1]):
         for row in range(grid_size[0]):
@@ -250,8 +263,12 @@ def history_template_match(cropped_img, grid_size=(6, 36)):
             x2, y2 = x1 + cell_width, y1 + cell_height
             cell = img_array[y1:y2, x1:x2]
 
-            img = Image.fromarray(cell)
-            img.save("./assets/screenshots/lobby_cells/cell_{}_{}.png".format(row, col))
+            cell_path = "./assets/screenshots/lobby_cells/cell_{}_{}.png".format(row, col)
+            try:
+                img = Image.fromarray(cell)
+                img.save(cell_path)
+            except Exception as e:
+                logging.error(f"Error saving cell image: {e}")
 
             detected = match_on_color(cell, target_colors=TARGET_COLORS)
             outcomes.append(detected)

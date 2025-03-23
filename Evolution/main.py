@@ -31,6 +31,7 @@ def main():
     parser = argparse.ArgumentParser(description='Baccarat Bot')
     parser.add_argument('-s', '--second-shoe', action='store_true', help='Run in second shoe mode')
     parser.add_argument('-d', '--drawdown', type=float, help='Current drawdown value (will be converted to negative)')
+    parser.add_argument('-t', '--test-mode', action='store_true', help='Run in test mode: place minimal bets every 3rd game only')
     args = parser.parse_args()
 
     if args.second_shoe and args.drawdown is None:
@@ -51,7 +52,8 @@ def main():
     
     try:
         # Initialize and run state machine with second shoe flag and drawdown
-        state_machine = BaccaratStateMachine(stop_event, is_second_shoe=args.second_shoe, initial_drawdown=args.drawdown)
+        state_machine = BaccaratStateMachine(stop_event, is_second_shoe=args.second_shoe, 
+                                            initial_drawdown=args.drawdown, test_mode=args.test_mode)
         state_machine.run()
     except KeyboardInterrupt:
         logging.info("Keyboard interrupt received, stopping...")

@@ -64,7 +64,7 @@ def get_outcomes_without_not_played(outcomes):
     """
     return [outcome for outcome in outcomes if outcome in ['P', 'B', 'T']]
 
-def analyze_first_6(outcomes, bias, skip_above_games = 10):
+def analyze_first_6(outcomes, bias, skip_above_games = 8):
     """
     Analyze the first 6 games and determine the starting mode.
     

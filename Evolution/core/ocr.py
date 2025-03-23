@@ -165,6 +165,7 @@ def extract_bet_size(image_path):
     text = pytesseract.image_to_string(bet_resized, config='--psm 7 -c tessedit_char_whitelist=0123456789$')
     text = text.strip()
     text = text.replace("$", "")  # Remove dollar sign if present
+    logging.debug(f"Extracted bet size text: {text}")
     try:
         bet_size = int(float(text))  # Convert to integer if valid
         #return max(math.ceil(bet_size / 5 * 2), 1) * 10  # Adjust for the actual bet size because of DKK issues

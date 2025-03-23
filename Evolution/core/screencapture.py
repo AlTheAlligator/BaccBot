@@ -5,6 +5,8 @@ import time
 from core.analysis import table_history_template_match, table_match_on_color
 import numpy as np
 import logging
+import os
+from pathlib import Path
 
 game_window_coodinates = (None, None, None, None)
 home_button_coordinates = (None, None, None, None)
@@ -419,32 +421,45 @@ def get_close_running_game_coordinates():
         print("Could not locate close running game button with sufficient confidence.")
         return None
 
+def ensure_directory_exists(file_path):
+    """Ensure the directory exists for a given file path"""
+    directory = os.path.dirname(file_path)
+    if directory and not os.path.exists(directory):
+        Path(directory).mkdir(parents=True, exist_ok=True)
+    return file_path
+
 def capture_full_screen(save_path="./assets/screenshots/full_screen.png"):
+    save_path = ensure_directory_exists(save_path)
     screenshot = pyautogui.screenshot()
     screenshot.save(save_path)
     return save_path
 
 def capture_coordinates(coordinates, save_path="./assets/screenshots/captured_area.png"):
+    save_path = ensure_directory_exists(save_path)
     screenshot = pyautogui.screenshot(region=coordinates)
     screenshot.save(save_path)
     return save_path
 
 def capture_nameless_window(save_path="./assets/screenshots/nameless_window.png"):
+    save_path = ensure_directory_exists(save_path)
     screenshot = pyautogui.screenshot(region=get_nameless_window_coordinates())
     screenshot.save(save_path)
     return save_path
 
 def capture_nameless_betbox(save_path="./assets/screenshots/bet_area.png"):
+    save_path = ensure_directory_exists(save_path)
     screenshot = pyautogui.screenshot(region=get_nameless_bet_coordinates())
     screenshot.save(save_path)
     return save_path
 
 def capture_nameless_cubes(save_path="./assets/screenshots/cubes_area.png"):
+    save_path = ensure_directory_exists(save_path)
     screenshot = pyautogui.screenshot(region=get_nameless_cube_coordinates())
     screenshot.save(save_path)
     return save_path
 
 def capture_game_window(save_path="./assets/screenshots/game_window.png"):
+    save_path = ensure_directory_exists(save_path)
     screenshot = pyautogui.screenshot(region=get_game_window_coordinates())
     screenshot.save(save_path)
     return save_path
@@ -453,6 +468,7 @@ def capture_game_result(save_path="./assets/screenshots/game_result.png"):
     coordinates = get_game_result_coordinates()
     if coordinates is None:
         return None
+    save_path = ensure_directory_exists(save_path)
     screenshot = pyautogui.screenshot(region=coordinates)
     screenshot.save(save_path)
     return save_path
@@ -461,6 +477,7 @@ def capture_bet_allowed(save_path="./assets/screenshots/bet_allowed.png"):
     coordinates = get_bet_allowed_coordinates()
     if coordinates is None:
         return None
+    save_path = ensure_directory_exists(save_path)
     screenshot = pyautogui.screenshot(region=coordinates)
     screenshot.save(save_path)
     return save_path
@@ -468,6 +485,7 @@ def capture_bet_allowed(save_path="./assets/screenshots/bet_allowed.png"):
 def crop_history_box(image_path, crop_coordinates, save_path="./assets/screenshots/cropped_history_box.png"):
     img = Image.open(image_path)
     cropped_img = img.crop(crop_coordinates)
+    save_path = ensure_directory_exists(save_path)
     cropped_img.save(save_path)
     return cropped_img
 
