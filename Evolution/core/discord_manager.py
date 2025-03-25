@@ -1,7 +1,20 @@
 from discord_webhook import DiscordWebhook
+import json
+import os
+
+def load_creds():
+    """Load credentials from JSON file"""
+    creds_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'creds.json')
+    with open(creds_path, 'r') as file:
+        return json.load(file)
 
 def send_discord_notification(message):
-    webhook_url = "https://discord.com/api/webhooks/1340721807254356059/VYyHrhaXPqZqHvP88pCKCV5bRLaXkSSqzo8efah67XJYwZjFq2B7OxOnlg_4-YpQWA5a"
+    creds = load_creds()
+    webhook_url = creds.get('discord_webhook_url')
+    if not webhook_url:
+        print("Warning: Discord webhook URL not configured")
+        return
+        
     webhook = DiscordWebhook(url=webhook_url, content=message)
     webhook.execute()
 

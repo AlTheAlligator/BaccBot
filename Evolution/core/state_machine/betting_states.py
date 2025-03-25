@@ -51,10 +51,11 @@ class WaitBetState(State):
             self._last_move_time = current_time
         
         if shoe_finished() and not self.context.game.is_second_shoe:
-            logging.info("Shoe finished, switching to second shoe mode")
-            #self.context.game.end_line_reason = "Shoe finished"
-            self.context.second_shoe_mode()
-            return "find_bet"
+            #logging.info("Shoe finished, switching to second shoe mode")
+            self.context.game.end_line_reason = "Shoe finished"
+            #self.context.second_shoe_mode()
+            #return "find_bet"
+            return "end_line"
             
         if bet_allowed:
             return "place_bet"

@@ -243,15 +243,15 @@ def get_bet_allowed_coordinates(threshold=0.8, first_run=True):
     global bet_allowed_coordinates
     
     reference = cv2.imread("./assets/templates/bet_allowed.png")
-    if bet_allowed_coordinates[0] is None:
-        screen = cv2.imread(capture_full_screen())
-        scales = np.linspace(0.9, 1.1, 3)
-    else:
-        img = Image.open(capture_coordinates(bet_allowed_coordinates))
-        if table_match_on_color(np.array(img), {"Allowed": (106, 58, 141), "Not Allowed": (29, 26, 23)}) == "Allowed":
-            return bet_allowed_coordinates
-        else:
-            return None
+    #if bet_allowed_coordinates[0] is None:
+    screen = cv2.imread(capture_full_screen())
+    scales = np.linspace(0.9, 1.1, 3)
+    #else:
+    #    img = Image.open(capture_coordinates(bet_allowed_coordinates))
+    #    if table_match_on_color(np.array(img), {"Allowed": (106, 58, 141), "Not Allowed": (29, 26, 23)}) == "Allowed":
+    #        return bet_allowed_coordinates
+    #    else:
+    #       return None
     
     best_val = 0
     best_loc = None

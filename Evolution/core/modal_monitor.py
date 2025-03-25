@@ -28,8 +28,10 @@ def monitor_modal(poll_interval: float = 0.1, confidence: float = 0.8):
             if max_val >= confidence:
                 logging.info("Modal detected on screen, removing...")
                 x, y = max_loc
-                w = 60
-                h = 30
+                x = x + 2
+                y = y + 2
+                w = 10
+                h = 10
                 time.sleep(random.uniform(0.3, 0.6))
                 click_button((x, y, w, h))
                 time.sleep(random.uniform(0.1, 0.3))
