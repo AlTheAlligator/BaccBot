@@ -10,7 +10,7 @@ def initialize_gsheets():
     scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets', "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
     creds = ServiceAccountCredentials.from_json_keyfile_name("./assets/creds.json", scope)
     client = gspread.authorize(creds)
-    sheet = client.open("Copy of Updated Pro Mode Tracking Sheet").get_worksheet_by_id(0)
+    sheet = client.open("Al the Alligator Updated Pro Mode Tracking Sheet").get_worksheet_by_id(0)
     return sheet
 
 def write_result_line(context):
@@ -37,11 +37,10 @@ def write_result_line(context):
         sheet.update_cell(cell[1].row, cell[1].col + 5, "Yes")
     else:
         sheet.update_cell(cell[1].row, cell[1].col + 5, "No")
-    # Second shoe drawdown
-    if context.game.first_shoe_drawdown != 0:
-        sheet.update_cell(cell[1].row, cell[1].col + 6, context.game.first_shoe_drawdown)
+        
     # Cubes left going into second shoe
     if context.game.end_line_reason == "Shoe finished" and context.game.cube_count > 0:
+        sheet.update_cell(cell[1].row, cell[1].col + 6, context.game.first_shoe_drawdown)
         sheet.update_cell(cell[1].row, cell[1].col + 7, context.game.cube_count)
     # Second shoe first 6
     #if context.game.is_second_shoe:
