@@ -98,3 +98,11 @@ timestamp,duration,initial_mode,end_line_reason,bias,first_6_outcomes,profit,all
 20250330_132840,18,PPP,few cubes with bad streaks (2+ streaks),,BBBPPB,232.5,BBBPPBTPBPPBBPBBTPPTPPPBPPPPBPPBBBBPPBBPPPBPPBBBB,
 20250330_135453,20,BBB,few cubes with bad streaks (2+ streaks),,BPPPPB,300.5,BPPPPBPPPBPBPPBBPPBBBPBBPPBBPTBBTPTBPPBPTBPBPBTPPTPBBBB,
 20250330_141127,16,BBB,"only 1 cube value left, higher than 100 and in profit",,PBPPPB,430.0,PBPPPBPBPBPTPPPPPPPBBBPPPBBPBPPPBPBBPBPPP,
+20250330_152718,9,Banker Only,Second shoe exit: Only 1 cube left,B,,243.0,,BBBBPBPPBBPBBPPBB
+20250330_154719,12,Banker Only,Second shoe exit: Only 1 cube left,B,,386.0,,BBBBPBPBPTPBBBPPBPBB
+20250330_165214,4,PPP,Second shoe exit condition met,B,,351.0,,PBBBBBBBBBB
+20250330_170151,5,PPP,Second shoe exit condition met,B,,234.5,,BBBBPPPPPPBP
+20250330_171412,10,PPP,Second shoe exit condition met,B,,-202.0,,BPBPBBPPBBPPBPPBPPBPBPBTPBBT
+20250330_172254,5,PPP,Second shoe exit condition met,B,,302.0,,BTBBBPBBBBBBPBTBTBPB
+20250330_173923,11,PPP,Second shoe exit condition met,B,,437.0,,BBBBPBPPBBPBPBBB
+20250330_174801,7,PPP,Second shoe exit condition met,B,,242.0,,PBBBBTBTBPPBBBB

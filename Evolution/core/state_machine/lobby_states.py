@@ -55,8 +55,19 @@ class LobbyState(State):
         return None  # Stay in lobby if no table found
 
     def find_suitable_table(self, bias):
-        """Find a suitable table based on the bias"""
-
+        """
+        Find a suitable table based on the bias and game mode.
+        
+        For second shoe mode, this ensures tables meet specific criteria:
+        - Must have 4 or 5 Banker wins in first 6 games
+        - Must have no more than 1 Tie in first 6 games
+        
+        Args:
+            bias: The bias to look for ('P', 'B', or '')
+            
+        Returns:
+            tuple: The coordinates of a suitable table, or None if none found
+        """
         # Second pass if no suitable table found
         scroll = random.randint(2, 3)
         for i in range(scroll):
@@ -68,10 +79,12 @@ class LobbyState(State):
         screenshot = np.array(screenshot)[:, :, ::-1]
         table_boxes = find_tables(screenshot)
         filtered_boxes = self.remove_cooldown_tables(table_boxes)
+        
+        # Extract and evaluate table histories with second_shoe flag if needed
         table_histories = extract_table_histories(screenshot, filtered_boxes, True)
         
-        # Evaluate tables
         table = evaluate_table_histories(table_histories, bias)
+            
         if table is not None:
             return table
 
@@ -88,6 +101,7 @@ class LobbyState(State):
         table_histories = extract_table_histories(screenshot, filtered_boxes, True)
         
         table = evaluate_table_histories(table_histories, bias)
+            
         if table is not None:
             return table
 

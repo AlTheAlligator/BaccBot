@@ -1,0 +1,82 @@
+✅ Second Shoe Mode — Structured Instructions for AI Integration
+🧠 Context
+Second Shoe Mode is initiated after a completed first shoe line, where the line has ended in a loss (drawdown is realized). Instead of continuing the same line, we evaluate whether we should start a new second shoe line based on cumulative drawdown and cube count.
+
+📊 Conditions to Trigger Second Shoe Mode
+Second shoe play is triggered only if:
+
+There is enough total drawdown (amount not specified — assumed to be calculated programmatically).
+
+There is a sufficient number of cubes left (at least 1).
+
+The current lobby does not have a Player bias — it must have no bias or Banker bias.
+
+🛠️ Second Shoe Line Preparation (Preset Sequence)
+To prepare the new line:
+
+Click "Player Start" mode.
+
+Select "Player Only".
+
+Press the W (Win) and L (Loss) buttons in the following strict sequence:
+
+Kopiér
+Rediger
+4x W
+11x L
+2x W
+2x L
+1x W
+1x L
+2x W
+1x L
+1x W
+3x L
+3x W
+1x L
+1x W
+1x L
+1x W
+11x L
+2x W
+1x L
+1x W
+1x L
+1x W
+1x L
+5x W
+After the sequence, switch to "Banker Only" mode.
+
+The line now has an initial virtual drawdown of -770, which must be factored into profit tracking.
+
+🔍 Entry Requirements for Second Shoe Table
+Once the line is ready, locate a valid Banker table:
+
+The first 6 games must have exactly 4 or 5 Banker wins.
+
+There must be no more than 1 Tie in the first 6 games.
+
+⛔ Exit Conditions — When to End the Line
+End the Second Shoe line if any of the following are true:
+
+Net profit of the line exceeds +200 units (starting from -770).
+
+Only 1 cube is left in the system.
+
+The line is naturally completed by the system.
+
+📈 Post-Play Tracking
+After each second shoe line, record the result in the Google Sheet with ID 1040988089 under a dedicated sheet/tab for Second Shoe Lines.
+
+🔒 Summary of Key Constraints for Bot Implementation
+Avoid reusing any portion of the first shoe's line; treat Second Shoe as its own standalone line.
+
+Always verify that lobby bias ≠ Player before initiating.
+
+Line prep sequence must be followed exactly.
+
+Validate table before starting to ensure statistical edge.
+
+Log drawdowns and profits meticulously — second shoes are higher risk and must be monitored precisely.
+
+Make sure that you don't break the regular 1st shoe flow, but reuse the code whenever it makes sense, so we don't repeat ourselves and have hell maintaining it

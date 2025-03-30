@@ -11,7 +11,7 @@ from core.evolution import get_bet_allowed, place_bets, shoe_finished
 
 def simulate_decision_time():
     """Quick decision-making simulation"""
-    return abs(normal(0.3, 0.1))
+    return abs(normal(0.1, 0.02))
 
 class FindBetState(State):
     def __init__(self, name: str, context):

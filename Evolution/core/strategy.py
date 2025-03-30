@@ -404,6 +404,12 @@ def check_for_end_line(context, use_mini_line_exit = False, use_moderate_exit = 
         return True
 
     cube_count, extracted_numbers = extract_cubes_and_numbers(capture_nameless_cubes())
+    if context.game.is_second_shoe:
+        if check_for_second_shoe_exit(context, cube_count, extracted_numbers):
+            context.game.end_line_reason = "Second shoe exit condition met"
+            return True
+        return False
+    
     # General rule 1: If only 1 cube value left higher than 100 and in profit, end line
     if cube_threshold_hit(1, 100, 1, cube_count=cube_count, extracted_numbers=extracted_numbers) and current_pnl >= 0:
         context.game.end_line_reason = "only 1 cube value left, higher than 100 and in profit"
@@ -424,11 +430,6 @@ def check_for_end_line(context, use_mini_line_exit = False, use_moderate_exit = 
         if cube_threshold_hit(50, 50, 3, cube_count=cube_count, extracted_numbers=extracted_numbers):
             context.game.end_line_reason = "3+ bad streak, at least -50 profit and less than 3 cubes"
             return True
-    
-    if context.game.is_second_shoe:
-        if check_for_second_shoe_exit(context, cube_count, extracted_numbers):
-            return True
-        return False
 
     if use_mini_line_exit:
         if check_for_mini_line_exit(context, cube_count, extracted_numbers):
@@ -440,12 +441,34 @@ def check_for_end_line(context, use_mini_line_exit = False, use_moderate_exit = 
 
     return False
 
-def check_for_second_shoe_exit(context, cube_count, extracted_numbers):
-    # Second shoe rule 1: If in profit or only 1 cube left, exit.
-    if cube_count <= 1 or context.get_total_pnl() >= 150:
-        context.game.end_line_reason = "only 1 cube left or in profit"
+def check_for_second_shoe_exit(context, cube_count: int, extracted_numbers: list[int]) -> bool:
+    """
+    Check if the second shoe line should be ended based on the specific exit conditions.
+    
+    Args:
+        context: The game context containing state information
+        cube_count: Number of cubes remaining
+        extracted_numbers: List of cube values extracted from the screen
+        
+    Returns:
+        bool: True if any exit condition is met, False otherwise
+    """
+    # Exit condition 1: Only 1 cube is left in the system
+    if cube_count <= 1:
+        context.game.end_line_reason = "Second shoe exit: Only 1 cube left"
+        logging.info("Second shoe exit condition met: Only 1 cube left")
         return True
-
+    
+    # Exit condition 2: Net profit exceeds +200 units (starting from -770)
+    # Since we initiated with -770, we need to check if current PnL > 200
+    if context.get_total_pnl() >= 200:
+        context.game.end_line_reason = "Second shoe exit: Profit target reached (+200 units)"
+        logging.info("Second shoe exit condition met: Profit target of +200 reached")
+        return True
+    
+    # Exit condition 3: The line is naturally completed by the system
+    # This is already handled by the check_for_end_line function's is_line_done() check
+    
     return False
 
 def check_for_mini_line_exit(context, cube_count, extracted_numbers):

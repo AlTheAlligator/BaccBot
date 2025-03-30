@@ -69,13 +69,17 @@ class StateMachineContext:
         
         # Initialize bet manager with initial drawdown for second shoe
         if is_second_shoe and initial_drawdown is not None:
-            self.table.bet_manager = BetManager(initial_pnl=initial_drawdown)
+            self.table.bet_manager = self.create_bet_manager(initial_pnl=initial_drawdown)
             self.table.line_start_time = datetime.now()
+
+    def create_bet_manager(self, initial_pnl: float = 0.0) -> BetManager:
+        """Creates a new bet manager with an optional initial PnL value"""
+        return BetManager(initial_pnl=initial_pnl)
 
     def create_bet(self, side: str, size: float) -> Bet:
         """Creates a new bet and adds it to the bet manager"""
         if self.table.bet_manager is None:
-            self.table.bet_manager = BetManager()
+            self.table.bet_manager = self.create_bet_manager()
             self.table.line_start_time = datetime.now()
         bet = Bet(side, size)
         self.table.bet_manager.add_bet(bet)

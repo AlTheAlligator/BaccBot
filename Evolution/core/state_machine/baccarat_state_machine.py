@@ -1,3 +1,4 @@
+from core.state_machine.second_shoe_states import SecondShoePreparationState
 from core.state_machine.state_machine_base import StateMachine
 from core.state_machine.lobby_states import LobbyState
 from core.state_machine.analysis_states import InitialAnalysisState, InitializeLineState
@@ -12,7 +13,7 @@ class BaccaratStateMachine(StateMachine):
     def __init__(self, stop_event, is_second_shoe=False, initial_drawdown=None, test_mode=False):
         self.stop_event = stop_event
         context = StateMachineContext(stop_event, is_second_shoe, initial_drawdown, test_mode)
-        initial_state = 'initial_analysis' if is_second_shoe else 'lobby'
+        initial_state = 'prepare_second_shoe' if is_second_shoe else 'lobby'
         super().__init__(initial_state, context)
         
     def _create_states(self):
@@ -21,6 +22,7 @@ class BaccaratStateMachine(StateMachine):
             'lobby': LobbyState('lobby', self.context),
             'initial_analysis': InitialAnalysisState('initial_analysis', self.context),
             'initialize_line': InitializeLineState('initialize_line', self.context),
+            'prepare_second_shoe': SecondShoePreparationState('prepare_second_shoe', self.context),
             'wait_next_game': WaitNextGameState('wait_next_game', self.context),
             'find_bet': FindBetState('find_bet', self.context),
             'wait_bet': WaitBetState('wait_bet', self.context),
