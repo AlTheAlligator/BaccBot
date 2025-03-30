@@ -32,17 +32,12 @@ def write_result_line(context):
     else:
         first_6 = get_first_6_non_ties(context.game.outcomes)
     sheet.update_cell(cell[1].row, cell[1].col + 4, ''.join(first_6))
-    # Second shoe?
-    if context.game.is_second_shoe:
-        sheet.update_cell(cell[1].row, cell[1].col + 5, "Yes")
-    else:
-        sheet.update_cell(cell[1].row, cell[1].col + 5, "No")
+
+    sheet.update_cell(cell[1].row, cell[1].col + 5, "No")
         
     # Cubes left going into second shoe
     if context.game.end_line_reason == "Shoe finished" and context.game.cube_count > 0:
-        sheet.update_cell(cell[1].row, cell[1].col + 6, context.game.first_shoe_drawdown)
+        sheet.update_cell(cell[1].row, cell[1].col, 0)
+        sheet.update_cell(cell[1].row, cell[1].col + 5, "Yes")
+        sheet.update_cell(cell[1].row, cell[1].col + 6, abs(context.game.first_shoe_drawdown))
         sheet.update_cell(cell[1].row, cell[1].col + 7, context.game.cube_count)
-    # Second shoe first 6
-    #if context.game.is_second_shoe:
-    #    first_6 = get_first_6_non_ties(context.game.outcomes)
-    #    sheet.update_cell(cell[1].row, cell[1].col + 9, ''.join(first_6))
