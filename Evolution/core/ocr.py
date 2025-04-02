@@ -168,7 +168,7 @@ def extract_bet_size(image_path):
     logging.debug(f"Extracted bet size text: {text}")
     try:
         bet_size = int(float(text))  # Convert to integer if valid
-        #return max(math.ceil(bet_size / 5 * 2), 1) * 10  # Adjust for the actual bet size because of DKK issues
+        #eturn max(math.ceil(bet_size / 5 * 2), 1) * 10  # Adjust for the actual bet size because of DKK issues
         return bet_size * 10
     except ValueError:
         return None

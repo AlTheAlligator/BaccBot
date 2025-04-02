@@ -494,6 +494,6 @@ def capture_history(running, threshold=0.8):
         game_window = capture_game_window()
     else:
         game_window = "./assets/screenshots/game_window.png"
-    cropped_image = crop_history_box(game_window, (11, 750, 510, 864))
+    cropped_image = crop_history_box(game_window, (11, 755, 525, 864))
     outcomes = table_history_template_match(cropped_image)
     return outcomes
