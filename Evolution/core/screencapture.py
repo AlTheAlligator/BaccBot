@@ -23,6 +23,7 @@ bet_250_coordinates = (None, None, None, None)
 bet_500_coordinates = (None, None, None, None)
 bet_1000_coordinates = (None, None, None, None)
 bet_2000_coordinates = (None, None, None, None)
+bet_5000_coordinates = None
 banker_bet_coordinates = (None, None, None, None)
 player_bet_coordinates = (None, None, None, None)
 
@@ -307,20 +308,22 @@ def get_10_bet_coordinates():
     global bet_10_coordinates
     if bet_10_coordinates[0] is not None:
         return bet_10_coordinates
-    chip5000 = None
-    while chip5000 is None:
-        chip5000 = get_bet_allowed_coordinates()
-    bet_10_coordinates = (chip5000[0] - 350, chip5000[1], chip5000[2], chip5000[3])
+    
+    global bet_5000_coordinates
+    while bet_5000_coordinates is None:
+        bet_5000_coordinates = get_bet_allowed_coordinates()
+    bet_10_coordinates = (bet_5000_coordinates[0] - 290, bet_5000_coordinates[1], bet_5000_coordinates[2], bet_5000_coordinates[3])
     return bet_10_coordinates
 
 def get_50_bet_coordinates():
     global bet_50_coordinates
     if bet_50_coordinates[0] is not None:
         return bet_50_coordinates
-    chip5000 = None
-    while chip5000 is None:
-        chip5000 = get_bet_allowed_coordinates()
-    bet_50_coordinates = (chip5000[0] - 290, chip5000[1], chip5000[2], chip5000[3])
+    
+    global bet_5000_coordinates
+    while bet_5000_coordinates is None:
+        bet_5000_coordinates = get_bet_allowed_coordinates()
+    bet_50_coordinates = (bet_5000_coordinates[0] - 230, bet_5000_coordinates[1], bet_5000_coordinates[2], bet_5000_coordinates[3])
     screenshot = pyautogui.screenshot(region=bet_50_coordinates)
     screenshot.save("./assets/screenshots/50_btn.png")
     return bet_50_coordinates
@@ -329,10 +332,11 @@ def get_250_bet_coordinates():
     global bet_250_coordinates
     if bet_250_coordinates[0] is not None:
         return bet_250_coordinates
-    chip5000 = None
-    while chip5000 is None:
-        chip5000 = get_bet_allowed_coordinates()
-    bet_250_coordinates = (chip5000[0] - 230, chip5000[1], chip5000[2], chip5000[3])
+    
+    global bet_5000_coordinates
+    while bet_5000_coordinates is None:
+        bet_5000_coordinates = get_bet_allowed_coordinates()
+    bet_250_coordinates = (bet_5000_coordinates[0] - 170, bet_5000_coordinates[1], bet_5000_coordinates[2], bet_5000_coordinates[3])
     screenshot = pyautogui.screenshot(region=bet_250_coordinates)
     screenshot.save("./assets/screenshots/250_btn.png")
     return bet_250_coordinates
@@ -341,10 +345,11 @@ def get_500_bet_coordinates():
     global bet_500_coordinates
     if bet_500_coordinates[0] is not None:
         return bet_500_coordinates
-    chip5000 = None
-    while chip5000 is None:
-        chip5000 = get_bet_allowed_coordinates()
-    bet_500_coordinates = (chip5000[0] - 170, chip5000[1], chip5000[2], chip5000[3])
+    
+    global bet_5000_coordinates
+    while bet_5000_coordinates is None:
+        bet_5000_coordinates = get_bet_allowed_coordinates()
+    bet_500_coordinates = (bet_5000_coordinates[0] - 110, bet_5000_coordinates[1], bet_5000_coordinates[2], bet_5000_coordinates[3])
     screenshot = pyautogui.screenshot(region=bet_500_coordinates)
     screenshot.save("./assets/screenshots/500_btn.png")
     return bet_500_coordinates
@@ -353,28 +358,41 @@ def get_1000_bet_coordinates():
     global bet_1000_coordinates
     if bet_1000_coordinates[0] is not None:
         return bet_1000_coordinates
-    chip5000 = None
-    while chip5000 is None:
-        chip5000 = get_bet_allowed_coordinates()
-    bet_1000_coordinates = (chip5000[0] - 110, chip5000[1], chip5000[2], chip5000[3])
+    
+    global bet_5000_coordinates
+    while bet_5000_coordinates is None:
+        bet_5000_coordinates = get_bet_allowed_coordinates()
+    bet_1000_coordinates = (bet_5000_coordinates[0] - 50, bet_5000_coordinates[1], bet_5000_coordinates[2], bet_5000_coordinates[3])
     return bet_1000_coordinates
 
 def get_2000_bet_coordinates():
     global bet_2000_coordinates
     if bet_2000_coordinates[0] is not None:
         return bet_2000_coordinates
-    chip5000 = None
-    while chip5000 is None:
-        chip5000 = get_bet_allowed_coordinates()
-    bet_2000_coordinates = (chip5000[0] - 50, chip5000[1], chip5000[2], chip5000[3])
+    
+    global bet_5000_coordinates
+    while bet_5000_coordinates is None:
+        bet_5000_coordinates = get_bet_allowed_coordinates()
+    bet_2000_coordinates = (bet_5000_coordinates[0], bet_5000_coordinates[1], bet_5000_coordinates[2], bet_5000_coordinates[3])
     return bet_2000_coordinates
+
+def get_5000_bet_coordinates():
+    global bet_5000_coordinates
+    if bet_5000_coordinates[0] is not None:
+        return bet_5000_coordinates
+    
+    
+    while bet_5000_coordinates is None:
+        bet_5000_coordinates = get_bet_allowed_coordinates()
+
+    return bet_5000_coordinates
 
 def get_banker_bet_coordinates():
     global banker_bet_coordinates
     if banker_bet_coordinates[0] is not None:
         return banker_bet_coordinates
     coordinates = get_2000_bet_coordinates()
-    coordinates = (coordinates[0] + 10, coordinates[1] - 170, coordinates[2] + 90, coordinates[3] + 80)
+    coordinates = (coordinates[0] - 30, coordinates[1] - 170, coordinates[2] + 90, coordinates[3] + 80)
     screenshot = pyautogui.screenshot(region=coordinates)
     screenshot.save("./assets/screenshots/banker_btn.png")
     banker_bet_coordinates = coordinates
@@ -385,7 +403,7 @@ def get_player_bet_coordinates():
     if player_bet_coordinates[0] is not None:
         return player_bet_coordinates
     coordinates = get_10_bet_coordinates()
-    coordinates = (coordinates[0] + 5, coordinates[1] - 170, coordinates[2] + 90, coordinates[3] + 80)
+    coordinates = (coordinates[0] - 30, coordinates[1] - 170, coordinates[2] + 90, coordinates[3] + 80)
     screenshot = pyautogui.screenshot(region=coordinates)
     screenshot.save("./assets/screenshots/player_btn.png")
     player_bet_coordinates = coordinates

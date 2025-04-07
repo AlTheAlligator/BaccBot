@@ -48,7 +48,7 @@ OPTIMIZED_PARAMETERS = {
     # Markov Chain Strategy - transition probability matrix based prediction
     "markov_chain": {
         "order": 3,
-        "min_samples": 18,
+        "min_samples": 6,
         "min_sequence_observations": 4,
         "confidence_threshold": 0.62,
         "banker_bias": 0.011,
@@ -63,7 +63,7 @@ OPTIMIZED_PARAMETERS = {
     "thompson_sampling": {
         "prior_alpha": 1.2,
         "prior_beta": 1.2,
-        "min_samples": 16,
+        "min_samples": 6,
         "confidence_threshold": 0.56,
         "use_context": True,
         "context_length": 3,
@@ -76,8 +76,8 @@ OPTIMIZED_PARAMETERS = {
     
     # Pattern Interruption Strategy - detects when patterns break
     "pattern_interruption": {
-        "pattern_window": 10,
-        "min_samples": 15,
+        "pattern_window": 6,
+        "min_samples": 8,
         "repeat_threshold": 2,
         "confidence_threshold": 0.61,
         "post_interruption_followup": True,
@@ -87,10 +87,10 @@ OPTIMIZED_PARAMETERS = {
     
     # Frequency Analysis Strategy - analyzes outcome distributions
     "frequency_analysis": {
-        "short_window": 6,
-        "medium_window": 14,
-        "long_window": 30,
-        "min_samples": 20,
+        "short_window": 4,
+        "medium_window": 10,
+        "long_window": 20,
+        "min_samples": 6,
         "confidence_threshold": 0.59,
         "pattern_length": 3,
         "banker_bias": 0.011,
@@ -105,7 +105,7 @@ OPTIMIZED_PARAMETERS = {
     
     # Sequential Pattern Mining Strategy - discovers frequent sequential patterns
     "sequential_pattern_mining": {
-        "min_samples": 22,
+        "min_samples": 6,
         "min_pattern_length": 2,
         "max_pattern_length": 5,
         "confidence_threshold": 0.66,
@@ -119,10 +119,10 @@ OPTIMIZED_PARAMETERS = {
     
     # Volatility Adaptive Strategy - adjusts approach based on volatility
     "volatility_adaptive": {
-        "short_window": 7,
-        "medium_window": 18,
-        "long_window": 38,
-        "min_samples": 18,
+        "short_window": 3,
+        "medium_window": 8,
+        "long_window": 16,
+        "min_samples": 6,
         "high_volatility_threshold": 0.58,
         "low_volatility_threshold": 0.28,
         "confidence_threshold_base": 0.56,
@@ -136,7 +136,7 @@ OPTIMIZED_PARAMETERS = {
     
     # Bayesian Inference Strategy - updates probabilities with Bayes' rule
     "bayesian_inference": {
-        "min_samples": 14,
+        "min_samples": 6,
         "confidence_threshold": 0.55,
         "prior_strength": 3.0,
         "pattern_length": 3,
@@ -144,14 +144,14 @@ OPTIMIZED_PARAMETERS = {
         "use_recency_weighting": True,
         "recency_factor": 0.95,
         "use_context_features": True,
-        "feature_window": 12
+        "feature_window": 4
     },
     
     # Momentum Oscillator Strategy - technical analysis inspired
     "momentum_oscillator": {
-        "short_window": 5,
-        "long_window": 15,
-        "min_samples": 18,
+        "short_window": 3,
+        "long_window": 6,
+        "min_samples": 6,
         "overbought_threshold": 68,
         "oversold_threshold": 32,
         "signal_line_period": 3,
@@ -164,18 +164,18 @@ OPTIMIZED_PARAMETERS = {
 
     # Adaptive Bias Strategy
     "adaptive_bias": {
-        "window_size": 20,
+        "window_size": 8,
         "weight_recent": 2.0,
-        "min_samples": 15,
+        "min_samples": 6,
         "confidence_threshold": 0.58,
         "banker_bias": 0.011
     },
     
     # Enhanced Adaptive Bias Strategy
     "enhanced_adaptive_bias": {
-        "window_sizes": [5, 10, 20],
+        "window_sizes": [4, 5, 6],
         "base_weight_recent": 2.5,
-        "min_samples": 18,
+        "min_samples": 6,
         "confidence_threshold": 0.60,
         "pattern_length": 4,
         "use_pattern_recognition": True,
@@ -188,18 +188,18 @@ OPTIMIZED_PARAMETERS = {
         "min_confidence": 0.70,
         "ultra_confidence": 0.85,
         "pattern_length": 4,
-        "window_sizes": [5, 10, 20],
+        "window_sizes": [4, 5, 6],
         "losing_streak_threshold": 2,
         "banker_bias": 0.011
     },
     
     # Multi Condition Strategy
     "multi_condition": {
-        "window_size": 15,
+        "window_size": 6,
         "short_window": 5,
         "pattern_length": 4,
         "streak_threshold": 3,
-        "skip_enabled": True,
+        "skip_enabled": False,
         "conditions_required": 2,
         "confidence_threshold": 0.62,
         "banker_bias": 0.011
@@ -207,7 +207,7 @@ OPTIMIZED_PARAMETERS = {
     
     # Dynamic Skip Strategy
     "dynamic_skip": {
-        "window_size": 15,
+        "window_size": 6,
         "short_window": 5,
         "pattern_length": 4,
         "min_confidence": 0.65,
@@ -221,16 +221,16 @@ OPTIMIZED_PARAMETERS = {
         "min_confidence": 0.70,
         "pattern_length": 4,
         "recovery_threshold": 2,
-        "skip_enabled": True,
+        "skip_enabled": False,
         "banker_bias": 0.011
     },
     
     # Trend Confirmation Strategy
     "trend_confirmation": {
-        "window_sizes": [5, 10, 20],
+        "window_sizes": [4, 5, 6],
         "min_threshold": 0.60,
         "confirmation_threshold": 2,
-        "skip_enabled": True,
+        "skip_enabled": False,
         "banker_bias": 0.011
     },
     
@@ -241,14 +241,14 @@ OPTIMIZED_PARAMETERS = {
         "max_threshold": 0.85,
         "de_escalation_factor": 0.02,
         "pattern_length": 4,
-        "window_sizes": [5, 10, 20],
+        "window_sizes": [4, 5, 6],
         "banker_bias": 0.011
     }
 }
 
 # Ensemble strategy that combines multiple meta-strategies
 ENSEMBLE_PARAMETERS = {
-    "min_samples": 25,
+    "min_samples": 6,
     "confidence_threshold": 0.67,
     "banker_bias": 0.012,
     "use_weighted_voting": True,
@@ -290,7 +290,7 @@ CONSERVATIVE_PARAMETERS = {
     "meta_strategy": {
         **OPTIMIZED_PARAMETERS["meta_strategy"],
         "confidence_threshold": 0.70,
-        "min_samples": 25
+        "min_samples": 6
     },
     "markov_chain": {
         **OPTIMIZED_PARAMETERS["markov_chain"],
@@ -324,17 +324,19 @@ CONSERVATIVE_PARAMETERS = {
     },
     "momentum_oscillator": {
         **OPTIMIZED_PARAMETERS["momentum_oscillator"],
+        "short_window": 4,
+        "long_window": 7,
         "confidence_threshold": 0.67
     },
     "adaptive_bias": {
         **OPTIMIZED_PARAMETERS["adaptive_bias"],
         "confidence_threshold": 0.65,
-        "window_size": 25
+        "window_size": 6
     },
     "enhanced_adaptive_bias": {
         **OPTIMIZED_PARAMETERS["enhanced_adaptive_bias"],
         "confidence_threshold": 0.67,
-        "window_sizes": [8, 15, 25]
+        "window_sizes": [4, 5, 6]
     },
     "selective_betting": {
         **OPTIMIZED_PARAMETERS["selective_betting"],
@@ -373,7 +375,7 @@ AGGRESSIVE_PARAMETERS = {
     "meta_strategy": {
         **OPTIMIZED_PARAMETERS["meta_strategy"],
         "confidence_threshold": 0.58,
-        "min_samples": 15
+        "min_samples": 6
     },
     "markov_chain": {
         **OPTIMIZED_PARAMETERS["markov_chain"],
@@ -412,12 +414,12 @@ AGGRESSIVE_PARAMETERS = {
     "adaptive_bias": {
         **OPTIMIZED_PARAMETERS["adaptive_bias"],
         "confidence_threshold": 0.52,
-        "window_size": 15
+        "window_size": 6
     },
     "enhanced_adaptive_bias": {
         **OPTIMIZED_PARAMETERS["enhanced_adaptive_bias"],
         "confidence_threshold": 0.54,
-        "window_sizes": [4, 8, 15]
+        "window_sizes": [4, 5, 6]
     },
     "selective_betting": {
         **OPTIMIZED_PARAMETERS["selective_betting"],

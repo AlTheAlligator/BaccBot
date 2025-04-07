@@ -9,10 +9,11 @@ import os
 import sys
 import traceback
 from datetime import datetime
+import gc
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.ERROR,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler('simulator.log'),
@@ -221,11 +222,14 @@ class GameSimulator:
         strategy_bet = self.strategy.get_bet(self.outcomes[:current_index])
         
         # Handle hybrid strategies that return None to indicate using original mode-based logic
-        if strategy_bet is None:
+        if strategy_bet in [None, "SKIP"]:
             # Use original mode-based logic
             next_bet = "P" if self.current_mode == "BBB" else "B"
             return next_bet
-            
+        if strategy_bet == "SKIP":
+            print("Skipping bet")
+            return "B"
+
         return strategy_bet
         
     def get_current_bet_size(self):
@@ -441,85 +445,95 @@ def get_table_bias(outcomes, bias):
         else:
             return 'B'  # No strong bias, stick with original
 
-def simulate_strategies(selected_strategies=None, bet_size=50, use_optimized_params=True, override_params=None):
+def simulate_strategies(historical_data_df: pd.DataFrame, selected_strategies=None, bet_size=50, use_optimized_params=True, override_params=None):
     """
     Run simulations for selected strategies on historical data with the option to 
     use optimized parameter sets.
     
     Args:
+        historical_data_df (pd.DataFrame): Pre-loaded DataFrame with historical data.
         selected_strategies (list, optional): List of BettingStrategy enum values to run.
             If None, all strategies with parameters will be run.
         bet_size (int, optional): Flat bet size to use for all strategies
         use_optimized_params (bool, optional): If True, use optimized parameter sets
             for each strategy. If False, use default parameters.
         override_params (dict, optional): Override parameters for specific strategies.
-            Keys are BettingStrategy enums, values are parameter dictionaries.
+            Keys are BettingStrategy enums, values are lists of parameter dictionaries.
             
     Returns:
         tuple: (summary_df, all_results) - DataFrame with summary metrics and raw results dict
     """
     # Start timing
     start_time = datetime.now()
-    logger.info(f"Starting simulation at {start_time}")
+    logger.info(f"Starting simulation run at {start_time}")
     
-    # Read the CSV file with historical data
-    csv_path = os.path.join(os.path.dirname(__file__), '..', 'results', 'finished_lines_combined.csv')
-    
-    # Check if file exists
-    if not os.path.exists(csv_path):
-        logger.error(f"CSV file not found: {csv_path}")
-        return pd.DataFrame(), {}
-    
-    try:
-        df = pd.read_csv(csv_path)
-        logger.info(f"Successfully loaded {len(df)} rows from {csv_path}")
-    except Exception as e:
-        logger.error(f"Error reading CSV file: {e}")
-        return pd.DataFrame(), {}
-    
-    # Verify required columns exist
-    required_columns = ['timestamp', 'initial_mode', 'all_outcomes_first_shoe']
-    missing_columns = [col for col in required_columns if col not in df.columns]
-    if missing_columns:
-        logger.error(f"CSV file missing required columns: {missing_columns}")
-        return pd.DataFrame(), {}
+    # --- Use the passed DataFrame ---
+    df = historical_data_df 
+    logger.info(f"Using pre-loaded DataFrame with {len(df)} rows.")
+    # --- Remove CSV loading code ---
+    # csv_path = os.path.join(os.path.dirname(__file__), '..', 'results', 'finished_lines_combined.csv')
+    # if not os.path.exists(csv_path): ...
+    # try: df = pd.read_csv(csv_path) ...
+    # except Exception as e: ...
+    # Verify required columns ... (This check is now done in test_parameter_combinations)
     
     # Get strategy parameters - either optimized or defaults
     if override_params and isinstance(override_params, dict):
-        strategy_params = override_params
+        # When overriding, we expect a dict like {strategy: [param_set1, param_set2]}
+        strategy_params = override_params 
+        # Ensure override_params values are lists
+        for strat, params in strategy_params.items():
+            if not isinstance(params, list):
+                 logger.warning(f"Override parameters for {strat.value} should be a list. Wrapping it.")
+                 strategy_params[strat] = [params]
     else:
         strategy_params = get_optimized_strategy_parameters() if use_optimized_params else {}
     
     # Determine which strategies to run
     if selected_strategies:
         # Filter to only selected strategies that have parameters if needed
-        if use_optimized_params:
+        if use_optimized_params or override_params:
             available_strategies = list(strategy_params.keys())
             strategies_to_run = [s for s in selected_strategies if s in available_strategies]
             if not strategies_to_run:
-                logger.error(f"None of the selected strategies have optimized parameters. Available strategies: {[s.value for s in available_strategies]}")
+                logger.error(f"None of the selected strategies have parameters defined (optimized or overridden). Available: {[s.value for s in available_strategies]}")
                 return pd.DataFrame(), {}
-        else:
+        else: # Running with defaults
             strategies_to_run = selected_strategies
-    else:
-        if use_optimized_params:
-            # Run all strategies with optimized parameters
+    else: # No specific strategies selected
+        if use_optimized_params or override_params:
+            # Run all strategies with defined parameters
             strategies_to_run = list(strategy_params.keys())
         else:
-            # Run all strategies 
+            # Run all strategies with defaults
             strategies_to_run = list(BettingStrategy)
-    
-    logger.info(f"Running simulation for strategies: {[s.value for s in strategies_to_run]} with {'optimized' if use_optimized_params else 'default'} parameters")
+            # Ensure strategy_params has entries for default runs
+            for strat in strategies_to_run:
+                 if strat not in strategy_params:
+                      strategy_params[strat] = [{}] # Use empty dict for default params
+
+    param_mode = "overridden" if override_params else ("optimized" if use_optimized_params else "default")
+    logger.info(f"Running simulation for strategies: {[s.value for s in strategies_to_run]} with {param_mode} parameters")
     
     # Initialize results storage
     all_results = {strategy: [] for strategy in strategies_to_run}
     processed_lines = 0
+    total_lines_to_process = len(df) * len(strategies_to_run) # Estimate total work
     
     # Process each line
     for index, row in df.iterrows():
         try:
             # Extract outcomes and initial mode
-            outcomes = list(row['all_outcomes_first_shoe'])
+            # Ensure outcomes are treated as a list of characters
+            outcomes_str = row['all_outcomes_first_shoe']
+            if isinstance(outcomes_str, str):
+                 outcomes = list(outcomes_str)
+            elif isinstance(outcomes_str, list): # Handle if already list
+                 outcomes = outcomes_str
+            else:
+                 logger.warning(f"Unexpected type for outcomes on line {index}: {type(outcomes_str)}. Skipping line.")
+                 continue
+
             initial_mode = row['initial_mode']
             four_start = row.get('four_start', False)
             
@@ -528,20 +542,20 @@ def simulate_strategies(selected_strategies=None, bet_size=50, use_optimized_par
             
             # Process each strategy with its parameters
             for strategy in strategies_to_run:
-                if use_optimized_params and strategy in strategy_params:
-                    params_list = strategy_params[strategy]
-                else:
-                    # Use empty dict for default parameters
-                    params_list = [{}]
+                # Get the list of parameter sets for this strategy
+                # If running defaults and no params defined, strategy_params[strategy] was set to [{}] above
+                params_list = strategy_params.get(strategy, [{}]) 
                 
                 for params in params_list:
                     try:
-                        # Add description if not present
-                        #if use_optimized_params and 'description' not in params:
-                        #    params['description'] = 'No description'
-                            
+                        # Add description if not present and using optimized params without override
+                        if use_optimized_params and not override_params and 'description' not in params:
+                             # This case might not happen if get_optimized_strategy_parameters always adds description
+                             params['description'] = 'Optimized (no desc)' 
+                        elif not use_optimized_params and not override_params and 'description' not in params:
+                             params['description'] = 'Default parameters'
+
                         # Add bet sizing parameters
-                        print(params)
                         bet_params = params.copy() if params else {}
                         # Override with flat bet size
                         bet_params['bet_size'] = bet_size
@@ -558,7 +572,7 @@ def simulate_strategies(selected_strategies=None, bet_size=50, use_optimized_par
                             four_start=four_start,
                             strategy=strategy,
                             bet_size=bet_size,
-                            params=bet_params,
+                            params=bet_params, # Pass the full params used
                             timestamp=row['timestamp']
                         )
                         
@@ -566,24 +580,25 @@ def simulate_strategies(selected_strategies=None, bet_size=50, use_optimized_par
                             all_results[strategy].append(result)
                             
                     except Exception as e:
-                        logger.error(f"Error simulating strategy {strategy.value} with params {params}: {e}")
-                        logger.debug(traceback.format_exc())
+                        param_desc_log = params.get('description', 'N/A')
+                        logger.error(f"Error simulating strategy {strategy.value} (Desc: {param_desc_log}) on line {index}: {e}")
+                        # logger.debug(traceback.format_exc()) # Keep debug for detailed trace
             
             processed_lines += 1
-            if processed_lines % 50 == 0:
-                logger.info(f"Processed {processed_lines}/{len(df)} lines ({processed_lines/len(df)*100:.1f}%)")
+            if processed_lines % 50 == 0: # Log progress based on lines processed
+                logger.info(f"Processed {processed_lines}/{len(df)} lines...")
             
         except Exception as e:
             logger.error(f"Error processing line {index}: {e}")
             logger.debug(traceback.format_exc())
     
     # Generate summary results and visualizations
-    summary_df = _generate_summary_dataframe(all_results, strategy_params, strategies_to_run, use_optimized_params, bet_size)
+    summary_df = _generate_summary_dataframe(all_results, strategy_params, strategies_to_run, use_optimized_params or bool(override_params), bet_size)
     
     # Log execution time
     end_time = datetime.now()
     execution_time = end_time - start_time
-    logger.info(f"Simulation completed in {execution_time.total_seconds():.2f} seconds")
+    logger.info(f"Simulation run completed in {execution_time.total_seconds():.2f} seconds")
     
     return summary_df, all_results
 
@@ -605,6 +620,8 @@ def _simulate_single_line(simulator, outcomes, initial_mode, start_from, four_st
     current_streak = 0  # positive for wins, negative for losses
     max_win_streak = 0
     max_loss_streak = 0
+    
+    total_possible_hands = len(outcomes) - start_from
     
     # Process remaining outcomes one by one
     for outcome in outcomes[start_from:]:
@@ -673,6 +690,7 @@ def _simulate_single_line(simulator, outcomes, initial_mode, start_from, four_st
         'initial_mode': initial_mode,
         'profit': total_pnl,
         'num_bets': num_bets,
+        'total_possible_hands': total_possible_hands,
         'win_rate': win_rate,
         'max_consecutive_wins': max_consecutive_wins,
         'max_consecutive_losses': max_consecutive_losses,
@@ -683,9 +701,9 @@ def _simulate_single_line(simulator, outcomes, initial_mode, start_from, four_st
         'wins': wins,
         'losses': losses,
         'ties': ties,
-        'all_outcomes_first_shoe': ','.join(outcomes),
+        # 'all_outcomes_first_shoe': ','.join(outcomes), # --- REMOVED THIS LINE ---
         'bet_size': bet_size,
-        'parameters': params,
+        'parameters': params, # Keep parameters used for this run
         'description': description
     }
     
@@ -778,6 +796,11 @@ def _calculate_strategy_metrics(strategy, param_str, results_df, description=Non
         avg_loss_streak = results_df['max_loss_streak'].mean()
         avg_risk_reward = results_df['risk_reward_ratio'].replace([float('inf'), float('-inf')], np.nan).mean()
         
+        # Calculate Betting Frequency
+        avg_num_bets = results_df['num_bets'].mean()
+        avg_total_possible = results_df['total_possible_hands'].mean()
+        betting_frequency = (avg_num_bets / avg_total_possible) * 100 if avg_total_possible > 0 else 0
+        
         # Calculate risk-adjusted metrics
         profit_std = results_df['profit'].std()
         sharpe_ratio = avg_profit_per_line / profit_std if profit_std > 0 else 0
@@ -798,6 +821,7 @@ def _calculate_strategy_metrics(strategy, param_str, results_df, description=Non
             'Avg Profit per Line': avg_profit_per_line,
             'Win Rate': win_rate,
             'Profitable Lines %': profitable_lines,
+            'Betting Frequency %': betting_frequency,
             'Max Drawdown': max_drawdown,
             'Avg Consecutive Wins': avg_consecutive_wins,
             'Avg Consecutive Losses': avg_consecutive_losses,
@@ -849,6 +873,7 @@ def _create_strategy_visualizations(summary_df, strategies_to_run, all_results, 
             print(f"   Average Profit per Line: ${row['Avg Profit per Line']:.2f}")
             print(f"   Win Rate: {row['Win Rate']:.2f}%")
             print(f"   Profitable Lines: {row['Profitable Lines %']:.1f}%")
+            print(f"   Betting Frequency: {row['Betting Frequency %']:.1f}%")
             print(f"   Max Drawdown: ${row['Max Drawdown']:.2f}")
             print(f"   Risk Metrics - Sharpe: {row['Sharpe Ratio']:.2f}, Sortino: {row['Sortino Ratio']:.2f}")
             print("-" * 100)
@@ -1016,6 +1041,7 @@ def _print_top_strategies_by_metrics(summary_df, category_profit):
         metrics = {
             'Total Profit': ('${:.2f}', summary_by_profit),
             'Win Rate': ('{:.2f}%', summary_by_win_rate),
+            'Betting Frequency %': ('{:.1f}%', summary_df.sort_values('Betting Frequency %', ascending=False)),
             'Sharpe Ratio': ('{:.2f}', summary_by_sharpe),
             'Sortino Ratio': ('{:.2f}', summary_df.sort_values('Sortino Ratio', ascending=False)),
             'Max Drawdown': ('${:.2f}', summary_df.sort_values('Max Drawdown', ascending=False)),
@@ -1078,7 +1104,7 @@ def generate_parameter_combinations(base_params, param_ranges):
     """
     import numpy as np
     import itertools
-    
+    print("Generating parameter combinations...")
     # Generate values for each parameter
     param_values = {}
     for param_name, range_info in param_ranges.items():
@@ -1108,6 +1134,7 @@ def generate_parameter_combinations(base_params, param_ranges):
     
     # Generate all possible combinations
     combinations = list(itertools.product(*value_lists))
+    print(f"Generated {len(combinations)} combinations of parameters")
     
     # Create parameter sets
     param_sets = []
@@ -1142,6 +1169,37 @@ def test_parameter_combinations(strategy, param_ranges, bet_size=50, base_params
     """
     logger.info(f"Testing parameter combinations for {strategy.value}")
     
+    # --- Load historical data ONCE ---
+    csv_path = os.path.join(os.path.dirname(__file__), '..', 'results', 'finished_lines_combined.csv')
+    if not os.path.exists(csv_path):
+        logger.error(f"CSV file not found: {csv_path}")
+        return None, None
+    try:
+        historical_data_df = pd.read_csv(csv_path)
+        logger.info(f"Successfully loaded {len(historical_data_df)} rows from {csv_path} for parameter testing.")
+        
+        # --- Filter out lines with less than 25 outcomes ---
+        initial_rows = len(historical_data_df)
+        # Ensure the column exists and handle potential non-string values gracefully
+        if 'all_outcomes_first_shoe' in historical_data_df.columns:
+            historical_data_df = historical_data_df[historical_data_df['all_outcomes_first_shoe'].apply(lambda x: isinstance(x, str) and len(x) >= 25)]
+            removed_rows = initial_rows - len(historical_data_df)
+            if removed_rows > 0:
+                logger.info(f"Removed {removed_rows} rows with fewer than 25 outcomes. Remaining rows: {len(historical_data_df)}")
+        else:
+            logger.warning("'all_outcomes_first_shoe' column not found, skipping outcome length filtering.")
+        # --- End filtering ---
+    except Exception as e:
+        logger.error(f"Error reading CSV file for parameter testing: {e}")
+        return None, None
+    # Verify required columns
+    required_columns = ['timestamp', 'initial_mode', 'all_outcomes_first_shoe']
+    missing_columns = [col for col in required_columns if col not in historical_data_df.columns]
+    if missing_columns:
+        logger.error(f"CSV file missing required columns: {missing_columns}")
+        return None, None
+    # --- End loading data ---
+
     # Get base parameters
     if base_params is None:
         from strategies.optimized_parameters import OPTIMIZED_PARAMETERS
@@ -1159,20 +1217,22 @@ def test_parameter_combinations(strategy, param_ranges, bet_size=50, base_params
     results = []
     time.sleep(2)  # To avoid overwhelming the logger
     # Run simulation for each parameter set
-    for param_set in param_sets:
+    for i, param_set in enumerate(param_sets): # Add index for logging
         try:
-            param_str = ", ".join(f"{k}={v}" for k, v in param_ranges.items())
-            logger.info(f"Testing parameters: {param_str}")
+            # Extract only the varied parameters for logging clarity
+            varied_params_str = ", ".join(f"{k}={v}" for k, v in param_set.items() if k in param_ranges)
+            logger.info(f"Testing combination {i+1}/{len(param_sets)}: {varied_params_str}")
             
-            # Run simulation with these parameters
+            # Run simulation with these parameters, passing the loaded DataFrame
             summary_df, raw_results = simulate_strategies(
+                historical_data_df=historical_data_df, # Pass the loaded data
                 selected_strategies=[strategy],
                 bet_size=bet_size,
-                use_optimized_params=True,
-                override_params={strategy: param_set}
+                use_optimized_params=True, # Keep True as we are overriding
+                override_params={strategy: [param_set]} # Pass as list for consistency
             )
             
-            if len(summary_df) > 0:
+            if summary_df is not None and len(summary_df) > 0:
                 # Extract metrics
                 metrics = summary_df.iloc[0].to_dict()
                 
@@ -1184,13 +1244,55 @@ def test_parameter_combinations(strategy, param_ranges, bet_size=50, base_params
                     'Sharpe Ratio': metrics['Sharpe Ratio'],
                     'Sortino Ratio': metrics['Sortino Ratio'],
                     'Max Drawdown': metrics['Max Drawdown'],
-                    'Parameters': param_set
+                    'Profitable Lines %': metrics['Profitable Lines %'],
+                    'Parameters': param_set # Store the full parameter set used
                 }
                 results.append(result)
                 
+                results_df = pd.DataFrame(results)
+
+                # --- Sort results by Sortino Ratio and print top 2 ---
+                if 'Profitable Lines %' in results_df.columns:
+                    top_2_profitable = results_df.sort_values('Profitable Lines %', ascending=False).head(2)
+                    print("\nTop 2 Parameter Combinations by Profitable Lines %:")
+                    print("-" * 60)
+                    for index, row in top_2_profitable.iterrows():
+                        print(f"Number {index}:")
+                        print(f"  Sortino Ratio: {row['Sortino Ratio']:.4f}")
+                        print(f"  Total Profit: {row['Total Profit']:.2f}")
+                        print(f"  Win Rate: {row['Win Rate']:.2f}%")
+                        print(f"  Max Drawdown: {row['Max Drawdown']:.2f}")
+                        print(f"  Profitable Lines %: {row['Profitable Lines %']:.2f}%")
+                        print(f"  Parameters: {row['Parameters']}") # Display the full parameter set
+                        print("-" * 30)
+
+                    top_2_sortino = results_df.sort_values('Sortino Ratio', ascending=False).head(2)
+                    print("\nTop 2 Parameter Combinations by Sortino Ratio:")
+                    print("-" * 60)
+                    for index, row in top_2_sortino.iterrows():
+                        print(f"Number {index}:")
+                        print(f"  Sortino Ratio: {row['Sortino Ratio']:.4f}")
+                        print(f"  Total Profit: {row['Total Profit']:.2f}")
+                        print(f"  Win Rate: {row['Win Rate']:.2f}%")
+                        print(f"  Max Drawdown: {row['Max Drawdown']:.2f}")
+                        print(f"  Profitable Lines %: {row['Profitable Lines %']:.2f}%")
+                        print(f"  Parameters: {row['Parameters']}") # Display the full parameter set
+                        print("-" * 30)
+                else:
+                    logger.warning("Could not find 'Sortino Ratio' in results to determine top 2.")
+            else:
+                 logger.warning(f"No summary generated for parameter set: {varied_params_str}")
+
+            # --- Clean up memory ---
+            del summary_df
+            del raw_results
+            gc.collect()
+            # --- End clean up ---
+                
         except Exception as e:
-            logger.error(f"Error testing parameter set: {e}")
+            logger.error(f"Error testing parameter set {param_set}: {e}")
             logger.debug(traceback.format_exc())
+            gc.collect() # Also collect garbage on error
     
     # Convert results to DataFrame
     if not results:
@@ -1204,9 +1306,15 @@ def test_parameter_combinations(strategy, param_ranges, bet_size=50, base_params
     best_params = {}
     
     for metric in metrics:
-        if metric in results_df.columns:
-            best_idx = results_df[metric].idxmax()
-            best_params[metric] = results_df.loc[best_idx, 'Parameters']
+        if metric in results_df.columns and not results_df[metric].isnull().all():
+            try:
+                best_idx = results_df[metric].idxmax()
+                best_params[metric] = results_df.loc[best_idx, 'Parameters']
+            except ValueError as ve:
+                 logger.warning(f"Could not find best parameter for metric '{metric}': {ve}") # Handle cases where all values might be NaN
+        else:
+            logger.warning(f"Metric '{metric}' not found or all NaN in results_df, cannot find best parameters.")
+
     
     # Create visualization of parameter impacts
     _visualize_parameter_impacts(results_df, strategy, param_ranges)
@@ -1283,8 +1391,68 @@ if __name__ == "__main__":
         BettingStrategy.STREAK_REVERSAL_SAFE_EXIT,
         BettingStrategy.CONFIDENCE_THRESHOLD_ESCALATOR,
         BettingStrategy.REINFORCEMENT_LEARNING,
-        BettingStrategy.BAYESIAN_INFERENCE
+        BettingStrategy.BAYESIAN_INFERENCE,
+        BettingStrategy.RECURRENT_NEURAL_NETWORK,
+        BettingStrategy.MARKOV_CHAIN,
+        BettingStrategy.HYBRID_MAJORITY,
+        BettingStrategy.HYBRID_ML,
+        BettingStrategy.HYBRID_PATTERN,
+        BettingStrategy.HYBRID_SIMPLE_MAJORITY,
+        #BettingStrategy.CONSERVATIVE_PATTERN,
+        BettingStrategy.COUNTER_STREAK,
+        BettingStrategy.DEEP_Q_NETWORK,
+        BettingStrategy.DYNAMIC_ADAPTIVE,
+        BettingStrategy.ENSEMBLE_VOTING,
+        BettingStrategy.FOLLOW_STREAK,
+        BettingStrategy.FREQUENCY_ANALYSIS,
+        BettingStrategy.GENETIC_ALGORITHM,
+        BettingStrategy.LOSS_AVERSION,
+        BettingStrategy.MAJORITY_LAST_N,
+        #BettingStrategy.META_STRATEGY,
+        BettingStrategy.MOMENTUM_OSCILLATOR,
+        BettingStrategy.MONTE_CARLO_SIMULATION,
+        BettingStrategy.MULTI_CONDITION,
+        BettingStrategy.PATTERN_BASED,
+        BettingStrategy.PATTERN_INTERRUPTION,
+        BettingStrategy.RISK_PARITY,
+        BettingStrategy.SEQUENTIAL_PATTERN_MINING,
+        BettingStrategy.THOMPSON_SAMPLING,
+        BettingStrategy.TIME_SERIES_FORECASTING,
+        BettingStrategy.TRANSFER_LEARNING,
+        BettingStrategy.TREND_CONFIRMATION,
+        BettingStrategy.VOLATILITY_ADAPTIVE
     ]
+
+    # --- Load historical data ONCE ---
+    csv_path = os.path.join(os.path.dirname(__file__), '..', 'results', 'finished_lines_combined.csv')
+    if not os.path.exists(csv_path):
+        logger.error(f"CSV file not found: {csv_path}")
+        exit(0)
+    try:
+        historical_data_df = pd.read_csv(csv_path)
+        logger.info(f"Successfully loaded {len(historical_data_df)} rows from {csv_path} for parameter testing.")
+        
+        # --- Filter out lines with less than 25 outcomes ---
+        initial_rows = len(historical_data_df)
+        # Ensure the column exists and handle potential non-string values gracefully
+        if 'all_outcomes_first_shoe' in historical_data_df.columns:
+            historical_data_df = historical_data_df[historical_data_df['all_outcomes_first_shoe'].apply(lambda x: isinstance(x, str) and len(x) >= 25)]
+            removed_rows = initial_rows - len(historical_data_df)
+            if removed_rows > 0:
+                logger.info(f"Removed {removed_rows} rows with fewer than 25 outcomes. Remaining rows: {len(historical_data_df)}")
+        else:
+            logger.warning("'all_outcomes_first_shoe' column not found, skipping outcome length filtering.")
+        # --- End filtering ---
+    except Exception as e:
+        logger.error(f"Error reading CSV file for parameter testing: {e}")
+        exit(0)
+    # Verify required columns
+    required_columns = ['timestamp', 'initial_mode', 'all_outcomes_first_shoe']
+    missing_columns = [col for col in required_columns if col not in historical_data_df.columns]
+    if missing_columns:
+        logger.error(f"CSV file missing required columns: {missing_columns}")
+        exit(0)
+    # --- End loading data ---
     
     # Run with flat betting size
     bet_size = 1
@@ -1292,6 +1460,7 @@ if __name__ == "__main__":
     try:
         # Use the unified simulation function
         summary_df, results = simulate_strategies(
+            historical_data_df,
             selected_strategies=optimized_strategies, 
             bet_size=bet_size,
             use_optimized_params=True
@@ -1305,18 +1474,36 @@ if __name__ == "__main__":
         logger.error(f"Error running simulation: {e}", exc_info=True)
         print(f"An error occurred: {e}")
 
+    #exit(0)  # Exit the script after running the simulation
+
     # Example of testing parameter combinations for a strategy
-    strategy = BettingStrategy.ADAPTIVE_BIAS
+    strategy = BettingStrategy.FREQUENCY_ANALYSIS
     
     # Define parameter ranges to test using min/max/steps format
+    #param_ranges = {
+    #    'window_size': {'min': 10, 'max': 30, 'steps': 5},  # Will test 5 evenly spaced values
+    #    'weight_recent': {'min': 1.5, 'max': 3.0, 'steps': 4},
+    #    'confidence_threshold': {'min': 0.52, 'max': 0.64, 'steps': 5},
+    #    'min_samples': {'min': 10, 'max': 25, 'steps': 4},
+    #    'skip_enabled': {'values': [True, False]}  # Discrete values using 'values' key
+    #}
     param_ranges = {
-        'window_size': {'min': 10, 'max': 30, 'steps': 5},  # Will test 5 evenly spaced values
-        'weight_recent': {'min': 1.5, 'max': 3.0, 'steps': 4},
-        'confidence_threshold': {'min': 0.52, 'max': 0.64, 'steps': 5},
-        'min_samples': {'min': 10, 'max': 25, 'steps': 4},
-        'skip_enabled': {'values': [True, False]}  # Discrete values using 'values' key
+        "short_window": {'min': 2, 'max': 3, 'steps': 2},
+        "medium_window": {'min': 4, 'max': 6, 'steps': 2},
+        "long_window": {'min': 10, 'max': 12, 'steps': 2},
+        "min_samples": {'min': 3, 'max': 4, 'steps': 2},
+        "confidence_threshold": {'min': 0.5, 'max': 0.6, 'steps': 2},
+        "pattern_length": {'min': 2, 'max': 3, 'steps': 2},
+        "banker_bias": {'min': 0.003, 'max': 0.006, 'steps': 2},
+        "use_trend_adjustment": {'values': [True, False]},
+        "trend_weight": {'min': 0.2 , 'max': 0.3, 'steps': 2},
+        "use_pattern_adjustment": {'values': [True, False]},
+        "pattern_weight": {'min': 0.6, 'max': 0.8, 'steps': 2},
+        "use_chi_square": {'values': [True, False]},
+        "significance_level": {'min':0.1, 'max': 0.15, 'steps': 2},
+        "clustering_method": {'values': ["short_vs_long", "multi_window"]}
     }
-    
+
     print(f"\nTesting parameter combinations for {strategy.value}...")
     best_params, results = test_parameter_combinations(
         strategy=strategy,

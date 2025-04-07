@@ -7,7 +7,7 @@ from core.nameless import (
     press_banker_only_btn, press_player_only_btn
 )
 from core.strategy import analyze_first_6, get_outcomes_without_not_played
-from core.screencapture import capture_history
+from core.screencapture import capture_history, get_2000_bet_coordinates
 
 class InitialAnalysisState(State):
     def __init__(self, name: str, context):
@@ -47,6 +47,9 @@ class InitializeLineState(State):
         
     def execute(self):
         logging.info("State: Initialize Line")
+
+
+
         if self.context.game.initial_mode == "PPP":
             press_banker_start_btn(True)
             press_tie_btn(True)
