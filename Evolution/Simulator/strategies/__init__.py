@@ -30,3 +30,9 @@ from .selective_betting import SelectiveBettingStrategy
 from .risk_parity import RiskParityStrategy
 from .streak_reversal_safe_exit import StreakReversalSafeExitStrategy
 from .confidence_threshold_escalator import ConfidenceThresholdEscalatorStrategy
+
+# Import the BettingStrategy enum
+from .betting_strategy import BettingStrategy
+
+# Import parameter ranges for strategy optimization
+from .parameter_ranges import get_parameter_ranges

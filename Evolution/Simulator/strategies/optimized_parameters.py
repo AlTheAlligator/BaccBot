@@ -87,19 +87,19 @@ OPTIMIZED_PARAMETERS = {
     
     # Frequency Analysis Strategy - analyzes outcome distributions
     "frequency_analysis": {
-        "short_window": 4,
-        "medium_window": 10,
-        "long_window": 20,
+        "short_window": 7,
+        "medium_window": 11,
+        "long_window": 19,
         "min_samples": 6,
-        "confidence_threshold": 0.59,
-        "pattern_length": 3,
-        "banker_bias": 0.011,
-        "use_trend_adjustment": True,
-        "trend_weight": 0.32,
+        "confidence_threshold": 0.2285,
+        "pattern_length": 4,
+        "banker_bias": 0.0164,
+        "use_trend_adjustment": False,
+        "trend_weight": 0.4095,
         "use_pattern_adjustment": True,
-        "pattern_weight": 0.38,
-        "use_chi_square": True,
-        "significance_level": 0.18,
+        "pattern_weight": 0.2279,
+        "use_chi_square": False,
+        "significance_level": 0.8455,
         "clustering_method": "multi_window"
     },
     
@@ -119,19 +119,19 @@ OPTIMIZED_PARAMETERS = {
     
     # Volatility Adaptive Strategy - adjusts approach based on volatility
     "volatility_adaptive": {
-        "short_window": 3,
-        "medium_window": 8,
-        "long_window": 16,
-        "min_samples": 6,
-        "high_volatility_threshold": 0.58,
-        "low_volatility_threshold": 0.28,
-        "confidence_threshold_base": 0.56,
-        "confidence_scaling": 0.18,
-        "banker_bias": 0.011,
+        "short_window": 6,
+        "medium_window": 12,
+        "long_window": 57,
+        "min_samples": 3,
+        "high_volatility_threshold": 0.6473,
+        "low_volatility_threshold": 0.3526,
+        "confidence_threshold_base": 0.4315,
+        "confidence_scaling": 0.31,
+        "banker_bias": 0.02,
         "use_adaptive_window": True,
         "statistical_mode": "combined",
-        "pattern_length": 3,
-        "min_pattern_occurrences": 2
+        "pattern_length": 6,
+        "min_pattern_occurrences": 3
     },
     
     # Bayesian Inference Strategy - updates probabilities with Bayes' rule
