@@ -48,3 +48,8 @@ class BettingStrategy(Enum):
     THOMPSON_SAMPLING = "thompson_sampling"  # Bayesian exploration/exploitation trade-off
     SEQUENTIAL_PATTERN_MINING = "sequential_pattern_mining"  # Mine sequential patterns in outcomes
     RECURRENT_NEURAL_NETWORK = "recurrent_neural_network"  # RNN for sequence prediction
+    CHAOS_THEORY = "chaos_theory"  # Look for deterministic patterns in seemingly random sequences
+    INFORMATION_THEORY = "information_theory"  # Analyze entropy and mutual information in outcomes
+    QUANTUM_INSPIRED = "quantum_inspired"  # Apply quantum computing concepts to decision making
+    FRACTAL_ANALYSIS = "fractal_analysis"  # Look for self-similar patterns at different scales
+    EVOLUTIONARY_GAME_THEORY = "evolutionary_game_theory"  # Model the game as a population of strategies

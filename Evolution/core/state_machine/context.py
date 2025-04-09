@@ -25,6 +25,7 @@ class GameContext:
     is_second_shoe: bool = False
     cube_count: int = 0
     cube_values: List[int] = field(default_factory=list)
+    strategy: str = "original"  # Strategy to use: "original" or "frequency_analysis"
 
     def update_mode(self, new_mode: str):
         """Updates the current mode and initial mode if not set"""
@@ -60,13 +61,13 @@ class TableContext:
 
 class StateMachineContext:
     """Main context object that holds all state machine context"""
-    def __init__(self, stop_event: Event, is_second_shoe: bool = False, initial_drawdown: float = None, test_mode: bool = False):
+    def __init__(self, stop_event: Event, is_second_shoe: bool = False, initial_drawdown: float = None, test_mode: bool = False, strategy: str = "original"):
         self.stop_event = stop_event
-        self.game = GameContext(is_second_shoe=is_second_shoe)
+        self.game = GameContext(is_second_shoe=is_second_shoe, strategy=strategy)
         self.table = TableContext()
         self.test_mode = test_mode
         self.game_counter = 0
-        
+
         # Initialize bet manager with initial drawdown for second shoe
         if is_second_shoe and initial_drawdown is not None:
             self.table.bet_manager = self.create_bet_manager(initial_pnl=initial_drawdown)
@@ -88,7 +89,6 @@ class StateMachineContext:
     def get_total_pnl(self) -> float:
         """Gets the total profit/loss from the bet manager"""
         return self.table.bet_manager.get_total_pnl() if self.table.bet_manager else 0.0
-        return self.table.bet_manager.get_total_pnl() / 2 * 5 if self.table.bet_manager else 0.0
 
     def get_total_pnl_DKK(self) -> float:
         """Gets the total profit/loss from the bet manager in DKK"""
@@ -101,7 +101,7 @@ class StateMachineContext:
             filename = f"bets_{timestamp}.csv"
             file_path = f"results/{filename}"
             self.table.bet_manager.export_to_csv(file_path)
-            
+
     def reset_table(self):
         """Reset table-specific context for a new table"""
         self.table.bet_manager = None
@@ -131,14 +131,14 @@ class StateMachineContext:
         """Exports the finished line data to a CSV file"""
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         file_path = "results/finished_lines.csv"
-        
+
         # Get first 6 from stored outcomes
         if self.game.is_second_shoe:
             first_6 = get_first_6_non_ties(self.game.first_shoe_outcomes)
         else:
             first_6 = get_first_6_non_ties(self.game.outcomes)
         first_6_str = ''.join(first_6) if first_6 else ''
-        
+
         if self.game.is_second_shoe:
             # Prepare the line data
             line_data = {
@@ -165,15 +165,15 @@ class StateMachineContext:
                 'all_outcomes_first_shoe': ''.join(self.game.outcomes),
                 'all_outcomes_second_shoe': ''
             }
-        
+
         # Create file with headers if it doesn't exist
         file_exists = os.path.exists(file_path)
         headers = line_data.keys()
-        
+
         with open(file_path, 'a', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=headers)
             if not file_exists:
                 writer.writeheader()
             writer.writerow(line_data)
-        
+
         # Google Sheets export is now handled directly in EndLineState

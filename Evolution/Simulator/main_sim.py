@@ -41,7 +41,7 @@ except ImportError:
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,  # Set to ERROR to reduce console output
+    level=logging.ERROR,  # Set to ERROR to reduce console output
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler('simulator.log'),
@@ -773,7 +773,7 @@ def _generate_summary_dataframe(all_results, strategy_params, strategies_to_run,
         logger.info(f"Created summary DataFrame with {len(summary_df)} rows")
 
         # Create and save visualizations
-        _create_strategy_visualizations(summary_df, strategies_to_run, all_results, bet_size, use_optimized_params)
+        #_create_strategy_visualizations(summary_df, strategies_to_run, all_results, bet_size, use_optimized_params)
 
     except Exception as e:
         logger.error(f"Error creating summary DataFrame or visualizations: {e}")
@@ -1928,31 +1928,31 @@ if __name__ == "__main__":
     # Run with flat betting size
     bet_size = 1
     print(f"\nRunning simulation with flat bet size of ${bet_size}...")
-    try:
+    #try:
         # Use the unified simulation function
-        summary_df, results = simulate_strategies(
-            historical_data_df,
-            selected_strategies=optimized_strategies,
-            bet_size=bet_size,
-            use_optimized_params=True
-        )
+        #summary_df, results = simulate_strategies(
+        #    historical_data_df,
+        #    selected_strategies=optimized_strategies,
+        #    bet_size=bet_size,
+        #    use_optimized_params=True
+        #)
 
-        if len(summary_df) == 0:
-            print("No results were generated. Check the log for details.")
-        else:
-            print(f"Simulation completed successfully with {len(summary_df)} strategy variants.")
-    except Exception as e:
-        logger.error(f"Error running simulation: {e}", exc_info=True)
-        print(f"An error occurred: {e}")
+        #if len(summary_df) == 0:
+        #    print("No results were generated. Check the log for details.")
+        #else:
+        #    print(f"Simulation completed successfully with {len(summary_df)} strategy variants.")
+    #except Exception as e:
+    #    logger.error(f"Error running simulation: {e}", exc_info=True)
+    #    print(f"An error occurred: {e}")
 
-    exit(0)  # Exit the script after running the simulation
+    #exit(0)  # Exit the script after running the simulation
 
     # Example of testing parameter combinations for a strategy
     # Import the parameter ranges from the strategies package
     from strategies import get_parameter_ranges
 
     # Select a strategy to test
-    strategy = BettingStrategy.VOLATILITY_ADAPTIVE
+    strategy = BettingStrategy.CHAOS_THEORY
 
     # Get parameter ranges for the selected strategy
     param_ranges = get_parameter_ranges(strategy)
@@ -1980,7 +1980,7 @@ if __name__ == "__main__":
         use_parallel=use_parallel,
         use_genetic=use_genetic,
         population_size=200,  # Larger population for better diversity
-        generations=50,      # More generations to see improvement
+        generations=10,      # More generations to see improvement
         mutation_rate=0.2
     )
 

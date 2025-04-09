@@ -16,10 +16,10 @@ def initialize_gsheets(second_shoe=False):
         # Access the dedicated sheet for Second Shoe Lines
         # Note: The actual format for a Google Sheet ID is a long alphanumeric string
         # If 1040988089 is a placeholder ID, replace with the real sheet ID in production
-        sheet = client.open("Al The Alligator Pro Mode Tracking Sheet").get_worksheet_by_id(1040988089)
+        sheet = client.open("Al The Alligator Pro Mode Tracking Sheet (Test)").get_worksheet_by_id(1040988089)
         logging.info("Accessed Second Shoe Lines worksheet for tracking")
     else:
-        sheet = client.open("Al The Alligator Pro Mode Tracking Sheet").get_worksheet_by_id(0)
+        sheet = client.open("Al The Alligator Pro Mode Tracking Sheet (Test)").get_worksheet_by_id(0)
     
     return sheet
 

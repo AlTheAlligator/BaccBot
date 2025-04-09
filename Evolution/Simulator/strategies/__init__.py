@@ -30,6 +30,16 @@ from .selective_betting import SelectiveBettingStrategy
 from .risk_parity import RiskParityStrategy
 from .streak_reversal_safe_exit import StreakReversalSafeExitStrategy
 from .confidence_threshold_escalator import ConfidenceThresholdEscalatorStrategy
+from .deep_q_network import DeepQNetworkStrategy
+from .genetic_algorithm import GeneticAlgorithmStrategy
+from .time_series_forecasting import TimeSeriesForecastingStrategy
+from .monte_carlo_simulation import MonteCarloSimulationStrategy
+from .transfer_learning import TransferLearningStrategy
+from .chaos_theory import ChaosTheoryStrategy
+from .information_theory import InformationTheoryStrategy
+from .quantum_inspired import QuantumInspiredStrategy
+from .fractal_analysis import FractalAnalysisStrategy
+from .evolutionary_game_theory import EvolutionaryGameTheoryStrategy
 
 # Import the BettingStrategy enum
 from .betting_strategy import BettingStrategy

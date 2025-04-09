@@ -10,12 +10,12 @@ from core.state_machine.result_states import (
 from core.state_machine.context import StateMachineContext
 
 class BaccaratStateMachine(StateMachine):
-    def __init__(self, stop_event, is_second_shoe=False, initial_drawdown=None, test_mode=False):
+    def __init__(self, stop_event, is_second_shoe=False, initial_drawdown=None, test_mode=False, strategy="original"):
         self.stop_event = stop_event
-        context = StateMachineContext(stop_event, is_second_shoe, initial_drawdown, test_mode)
+        context = StateMachineContext(stop_event, is_second_shoe, initial_drawdown, test_mode, strategy)
         initial_state = 'prepare_second_shoe' if is_second_shoe else 'lobby'
         super().__init__(initial_state, context)
-        
+
     def _create_states(self):
         """Create all state instances with context"""
         return {
@@ -33,7 +33,7 @@ class BaccaratStateMachine(StateMachine):
             'end_line': EndLineState('end_line', self.context),
             'leave_table': LeaveTableState('leave_table', self.context)
         }
-        
+
     def run(self):
         """Main loop that drives the state machine"""
         while not self.stop_event.is_set():

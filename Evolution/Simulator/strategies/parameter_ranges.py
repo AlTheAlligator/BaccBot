@@ -305,11 +305,11 @@ STRATEGY_PARAMETER_RANGES = {
 
     # Genetic Algorithm strategy
     BettingStrategy.GENETIC_ALGORITHM: {
-        'population_size': {'min': 10, 'max': 50, 'steps': 5},
-        'mutation_rate': {'min': 0.01, 'max': 0.2, 'steps': 5},
-        'crossover_rate': {'min': 0.6, 'max': 0.9, 'steps': 4},
-        'generations': {'min': 5, 'max': 20, 'steps': 4},
-        'selection_pressure': {'min': 1.5, 'max': 3.0, 'steps': 4},
+        'population_size': {'min': 10, 'max': 500, 'steps': 50},
+        'mutation_rate': {'min': 0.01, 'max': 0.2, 'steps': 10},
+        'crossover_rate': {'min': 0.3, 'max': 0.9, 'steps': 6},
+        'generations': {'min': 5, 'max': 50, 'steps': 10},
+        'selection_pressure': {'min': 1, 'max': 4.0, 'steps': 4},
     },
 
     # Thompson Sampling strategy
@@ -363,6 +363,55 @@ STRATEGY_PARAMETER_RANGES = {
         'learning_rate': {'min': 0.001, 'max': 0.1, 'steps': 5},
         'sequence_length': {'min': 5, 'max': 20, 'steps': 4},
         'batch_size': {'min': 8, 'max': 64, 'steps': 4},
+    },
+
+    # Chaos Theory strategy
+    BettingStrategy.CHAOS_THEORY: {
+        'embedding_dimension': {'min': 2, 'max': 5, 'steps': 4},
+        'time_delay': {'min': 1, 'max': 7, 'steps': 7},
+        'prediction_horizon': {'min': 1, 'max': 7, 'steps': 7},
+        'num_neighbors': {'min': 3, 'max': 100, 'steps': 97},
+        'min_samples': {'min': 3, 'max': 6, 'steps': 4},
+        'banker_bias': {'min': 0.0, 'max': 0.1, 'steps': 10},
+    },
+
+    # Information Theory strategy
+    BettingStrategy.INFORMATION_THEORY: {
+        'entropy_window': {'min': 2, 'max': 30, 'steps': 29},
+        'mutual_info_lag': {'min': 1, 'max': 5, 'steps': 5},
+        'entropy_threshold': {'min': 0.5, 'max': 0.95, 'steps': 20},
+        'mutual_info_threshold': {'min': 0.01, 'max': 0.5, 'steps': 20},
+        'min_samples': {'min': 2, 'max': 6, 'steps': 5},
+        'banker_bias': {'min': 0.0, 'max': 0.1, 'steps': 10},
+    },
+
+    # Quantum-Inspired strategy
+    BettingStrategy.QUANTUM_INSPIRED: {
+        'num_qubits': {'min': 2, 'max': 10, 'steps': 9},
+        'amplitude_boost': {'min': 1.0, 'max': 2.0, 'steps': 5},
+        'interference_factor': {'min': 0.1, 'max': 0.5, 'steps': 5},
+        'grover_iterations': {'min': 1, 'max': 3, 'steps': 3},
+        'min_samples': {'min': 2, 'max': 6, 'steps': 4},
+        'banker_bias': {'min': 0.0, 'max': 0.1, 'steps': 10},
+    },
+
+    # Fractal Analysis strategy
+    BettingStrategy.FRACTAL_ANALYSIS: {
+        'min_scale': {'min': 3, 'max': 10, 'steps': 8},
+        'max_scale': {'min': 30, 'max': 100, 'steps': 8},
+        'hurst_threshold': {'min': 0.4, 'max': 0.8, 'steps': 5},
+        'min_samples': {'min': 2, 'max': 6, 'steps': 8},
+        'banker_bias': {'min': 0.0, 'max': 0.1, 'steps': 10},
+    },
+
+    # Evolutionary Game Theory strategy
+    BettingStrategy.EVOLUTIONARY_GAME_THEORY: {
+        'population_size': {'min': 5, 'max': 100, 'steps': 20},
+        'mutation_rate': {'min': 0.05, 'max': 0.3, 'steps': 6},
+        'selection_pressure': {'min': 1.0, 'max': 2.0, 'steps': 5},
+        'min_samples': {'min': 2, 'max': 6, 'steps': 5},
+        'evolution_interval': {'min': 2, 'max': 20, 'steps': 19},
+        'banker_bias': {'min': 0.0, 'max': 0.1, 'steps': 20},
     },
 }
 

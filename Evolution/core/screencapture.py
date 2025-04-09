@@ -232,10 +232,10 @@ def get_nameless_cube_coordinates(threshold=0.8):
 def get_game_result_coordinates(threshold=0.6):
     coordinates = get_game_window_coordinates()
     # Recalculate width and height
-    adjusted_x = (coordinates[0] + coordinates[2] // 2) - 45
-    adjusted_y = (coordinates[1] + coordinates[3] // 2) - 158
-    adjusted_width = 110
-    adjusted_height = 27
+    adjusted_x = (coordinates[0] + coordinates[2] // 2) - 50
+    adjusted_y = (coordinates[1] + coordinates[3] // 2) - 310
+    adjusted_width = 120
+    adjusted_height = 50
 
     # Return the adjusted game window's coordinates and size
     return (adjusted_x, adjusted_y, adjusted_width, adjusted_height)
@@ -512,6 +512,6 @@ def capture_history(running, threshold=0.8):
         game_window = capture_game_window()
     else:
         game_window = "./assets/screenshots/game_window.png"
-    cropped_image = crop_history_box(game_window, (11, 755, 525, 864))
+    cropped_image = crop_history_box(game_window, (11, 775, 530, 900))
     outcomes = table_history_template_match(cropped_image)
     return outcomes
