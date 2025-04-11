@@ -278,13 +278,13 @@ STRATEGY_PARAMETER_RANGES = {
 
     # Frequency Analysis strategy
     BettingStrategy.FREQUENCY_ANALYSIS: {
-        'short_window': {'min': 2, 'max': 10, 'steps': 9},
-        'medium_window': {'min': 8, 'max': 20, 'steps': 13},
-        'long_window': {'min': 18, 'max': 40, 'steps': 23},
-        'min_samples': {'min': 2, 'max': 6, 'steps': 5},
-        'confidence_threshold': {'min': 0.2, 'max': 0.9, 'steps': 50},
-        'pattern_length': {'min': 2, 'max': 6, 'steps': 5},
-        'banker_bias': {'min': 0.001, 'max': 0.05, 'steps': 20},
+        'short_window': {'min': 1, 'max': 12, 'steps': 12},
+        'medium_window': {'min': 4, 'max': 20, 'steps': 17},
+        'long_window': {'min': 8, 'max': 40, 'steps': 33},
+        'min_samples': {'min': 2, 'max': 10, 'steps': 9},
+        'confidence_threshold': {'min': 0.1, 'max': 0.9, 'steps': 50},
+        'pattern_length': {'min': 1, 'max': 10, 'steps': 10},
+        'banker_bias': {'min': 0.0, 'max': 0.05, 'steps': 20},
         'use_trend_adjustment': {'values': [True, False]},
         'trend_weight': {'min': 0.01, 'max': 0.9, 'steps': 50},
         'use_pattern_adjustment': {'values': [True, False]},
@@ -413,6 +413,104 @@ STRATEGY_PARAMETER_RANGES = {
         'evolution_interval': {'min': 2, 'max': 20, 'steps': 19},
         'banker_bias': {'min': 0.0, 'max': 0.1, 'steps': 20},
     },
+
+    # Hybrid Frequency-Volatility strategy
+    BettingStrategy.HYBRID_FREQUENCY_VOLATILITY: {
+        # Main hybrid parameters
+        'performance_window': {'min': 3, 'max': 100, 'steps': 98},
+        'min_confidence_diff': {'min': 0.01, 'max': 0.2, 'steps': 20},
+        'performance_weight': {'min': 0.01, 'max': 0.9, 'steps': 50},
+        'confidence_weight': {'min': 0.01, 'max': 0.9, 'steps': 50},
+
+        # Nested frequency parameters
+        'frequency_params': {
+            'short_window': {'min': 6, 'max': 8, 'steps': 3},
+            'medium_window': {'min': 10, 'max': 12, 'steps': 3},
+            'long_window': {'min': 18, 'max': 20, 'steps': 3},
+            'min_samples': {'min': 2, 'max': 6, 'steps': 5},
+            'confidence_threshold': {'min': 0.1, 'max': 0.9, 'steps': 20},
+            'pattern_length': {'min': 2, 'max': 6, 'steps': 5},
+            'banker_bias': {'min': 0.001, 'max': 0.05, 'steps': 20},
+            'use_trend_adjustment': {'values': [True, False]},
+            'trend_weight': {'min': 0.01, 'max': 0.9, 'steps': 20},
+            'use_pattern_adjustment': {'values': [True, False]},
+            'pattern_weight': {'min': 0.01, 'max': 0.9, 'steps': 20},
+            'use_chi_square': {'values': [True, False]},
+            'significance_level': {'min': 0.01, 'max': 0.9, 'steps': 20},
+            'clustering_method': {'values': ['multi_window', 'clustering_method']},
+        },
+
+        # Nested volatility parameters
+        'volatility_params': {
+            'short_window': {'min': 2, 'max': 6, 'steps': 5},
+            'medium_window': {'min': 5, 'max': 12, 'steps': 8},
+            'long_window': {'min': 10, 'max': 60, 'steps': 51},
+            'min_samples': {'min': 2, 'max': 6, 'steps': 5},
+            'high_volatility_threshold': {'min': 0.3, 'max': 0.9, 'steps': 20},
+            'low_volatility_threshold': {'min': 0.1, 'max': 0.5, 'steps': 20},
+            'confidence_threshold_base': {'min': 0.3, 'max': 0.8, 'steps': 20},
+            'confidence_scaling': {'min': 0.01, 'max': 0.5, 'steps': 20},
+            'banker_bias': {'min': 0.005, 'max': 0.02, 'steps': 20},
+            'use_adaptive_window': {'values': [True, False]},
+            'statistical_mode': {'values': ['frequency', 'pattern', 'streak', 'combined']},
+            'pattern_length': {'min': 2, 'max': 6, 'steps': 5},
+            'min_pattern_occurrences': {'min': 2, 'max': 6, 'steps': 5},
+        }
+    },
+
+    # Neural Oscillator strategy
+    BettingStrategy.NEURAL_OSCILLATOR: {
+        'num_oscillators': {'min': 2, 'max': 12, 'steps': 11},
+        'coupling_strength': {'min': 0.1, 'max': 0.5, 'steps': 10},
+        'adaptation_rate': {'min': 0.01, 'max': 0.4, 'steps': 50},
+        'resonance_threshold': {'min': 0.1, 'max': 0.9, 'steps': 9},
+        'phase_sync_threshold': {'min': 0.1, 'max': 0.9, 'steps': 9},
+        'min_samples': {'min': 2, 'max': 10, 'steps': 9},
+        'banker_bias': {'min': 0.0, 'max': 0.1, 'steps': 20},
+    },
+
+    # Adaptive Momentum strategy
+    BettingStrategy.ADAPTIVE_MOMENTUM: {
+        'window_sizes': {'values': [[5, 10, 20, 30, 50], [3, 7, 15, 25, 40], [5, 15, 30, 60, 100]]},
+        'weight_adaptation_rate': {'min': 0.01, 'max': 0.4, 'steps': 50},
+        'threshold_adaptation_rate': {'min': 0.01, 'max': 0.4, 'steps': 50},
+        'mean_reversion_threshold': {'min': 0.1, 'max': 0.8, 'steps': 20},
+        'initial_threshold': {'min': 0.1, 'max': 0.9, 'steps': 20},
+        'min_samples': {'min': 2, 'max': 10, 'steps': 9},
+        'banker_bias': {'min': 0.0, 'max': 0.1, 'steps': 20},
+    },
+
+    # Symbolic Dynamics strategy
+    BettingStrategy.SYMBOLIC_DYNAMICS: {
+        'symbol_length': {'min': 2, 'max': 6, 'steps': 5},
+        'recurrence_threshold': {'min': 0.1, 'max': 0.9, 'steps': 20},
+        'entropy_threshold': {'min': 0.1, 'max': 0.9, 'steps': 20},
+        'forbidden_pattern_weight': {'min': 0.1, 'max': 0.9, 'steps': 20},
+        'min_samples': {'min': 2, 'max': 10, 'steps': 9},
+        'banker_bias': {'min': 0.0, 'max': 0.1, 'steps': 20},
+    },
+
+    # Bayesian Network strategy
+    BettingStrategy.BAYESIAN_NETWORK: {
+        'max_parents': {'min': 1, 'max': 19, 'steps': 10},
+        'prior_strength': {'min': 0.1, 'max': 5.0, 'steps': 50},
+        'confidence_threshold': {'min': 0.1, 'max': 0.9, 'steps': 20},
+        'learning_rate': {'min': 0.01, 'max': 0.3, 'steps': 50},
+        'min_samples': {'min': 2, 'max': 10, 'steps': 9},
+        'banker_bias': {'min': 0.0, 'max': 0.1, 'steps': 20},
+    },
+
+    # Reinforcement Meta-Learning strategy
+    BettingStrategy.REINFORCEMENT_META_LEARNING: {
+        'initial_learning_rate': {'min': 0.01, 'max': 0.4, 'steps': 50},
+        'exploration_rate': {'min': 0.01, 'max': 0.3, 'steps': 50},
+        'exploration_decay': {'min': 0.9, 'max': 0.999, 'steps': 20},
+        'min_exploration': {'min': 0.01, 'max': 0.1, 'steps': 20},
+        'reward_discount': {'min': 0.5, 'max': 0.99, 'steps': 20},
+        'min_samples': {'min': 2, 'max': 10, 'steps': 9},
+        'banker_bias': {'min': 0.0, 'max': 0.1, 'steps': 20},
+        'context_length': {'min': 2, 'max': 10, 'steps': 9},
+    }
 }
 
 def get_parameter_ranges(strategy):
@@ -432,7 +530,16 @@ def get_parameter_ranges(strategy):
     for key, value in STRATEGY_PARAMETER_RANGES.items():
         # Compare string values to handle different enum instances
         if hasattr(key, 'value') and key.value == strategy_key:
+            # Validate nested parameter ranges
+            for param_name, param_range in value.items():
+                if isinstance(param_range, dict) and not ('values' in param_range or ('min' in param_range and 'max' in param_range and 'steps' in param_range)):
+                    # This is a nested parameter structure, validate each nested parameter
+                    for nested_param, nested_range in param_range.items():
+                        if not ('values' in nested_range or ('min' in nested_range and 'max' in nested_range and 'steps' in nested_range)):
+                            logger.error(f"Invalid nested parameter range for {param_name}.{nested_param} in strategy {strategy_key}")
+                            return {}
             return value
 
     logger.warning(f"No parameter ranges defined for strategy {strategy}. Using empty dict.")
     return {}
+

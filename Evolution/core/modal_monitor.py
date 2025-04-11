@@ -1,5 +1,6 @@
 import threading
 import time
+import numpy as np
 import pyautogui
 import logging
 import random
@@ -18,7 +19,7 @@ def monitor_modal(poll_interval: float = 0.1, confidence: float = 0.8):
     """
     while True:
         try:
-            screen = cv2.imread(capture_full_screen("./assets/screenshots/full_screen_modal.png"))
+            screen = cv2.cvtColor(np.array(capture_full_screen("./assets/screenshots/full_screen_modal.png")), cv2.COLOR_RGB2BGR)
             reference = cv2.imread("./assets/templates/jeg_forstar_btn.png")
             #reference = cv2.cvtColor(reference, cv2.COLOR_RGB2BGR)
 
@@ -36,7 +37,7 @@ def monitor_modal(poll_interval: float = 0.1, confidence: float = 0.8):
                 click_button((x, y, w, h))
                 time.sleep(random.uniform(0.1, 0.3))
 
-                screen = cv2.imread(capture_full_screen("./assets/screenshots/full_screen_modal.png"))
+                screen = cv2.cvtColor(np.array(capture_full_screen("./assets/screenshots/full_screen_modal.png")), cv2.COLOR_RGB2BGR)
                 reference = cv2.imread("./assets/templates/fortsat_med_spil.png")
 
                 result = cv2.matchTemplate(screen, reference, cv2.TM_CCOEFF_NORMED)

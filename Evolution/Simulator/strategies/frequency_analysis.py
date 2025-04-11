@@ -48,6 +48,7 @@ class FrequencyAnalysisStrategy(BaseStrategy):
             'long': {'P': 0, 'B': 0}
         }
         self.pattern_frequencies = defaultdict(lambda: {'P': 0, 'B': 0})
+        self.last_confidence = 0
 
         # Store results of analysis for tracking/debugging
         self.analysis_results = []
@@ -84,7 +85,7 @@ class FrequencyAnalysisStrategy(BaseStrategy):
 
         # Store analysis results for debugging
         self.analysis_results.append(analysis)
-
+        self.last_confidence = confidence
         # Make decision based on confidence
         if confidence >= self.confidence_threshold:
             return bet

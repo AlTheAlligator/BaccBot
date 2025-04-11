@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 from PIL import Image
 import logging
+import os
 
 templates = {
     "B": "./assets/templates/history_banker.png",
@@ -54,7 +55,20 @@ def table_match_on_color(cell, target_colors=TABLE_TARGET_COLORS):
     return detected
 
 def table_history_template_match(cropped_img, grid_size=(6, 26)):
-    img_array = np.array(cropped_img)
+    """Analyze a cropped image of the history table and identify outcomes
+
+    Args:
+        cropped_img: PIL Image or numpy array of the cropped history area
+        grid_size: Tuple of (rows, columns) in the grid
+
+    Returns:
+        List of detected outcomes ('P', 'B', 'T', 'N')
+    """
+    # Convert to numpy array if it's a PIL Image
+    if isinstance(cropped_img, Image.Image):
+        img_array = np.array(cropped_img)
+    else:
+        img_array = cropped_img
 
     cell_width = img_array.shape[1] // grid_size[1]
     cell_height = img_array.shape[0] // grid_size[0]
@@ -67,8 +81,20 @@ def table_history_template_match(cropped_img, grid_size=(6, 26)):
             x2, y2 = x1 + cell_width - (offset * 2), y1 + cell_height - (offset * 2)
             cell = img_array[y1:y2, x1:x2]
 
-            img = Image.fromarray(cell)
-            img.save("./assets/screenshots/cells/cell_{}_{}.png".format(row, col))
+            # Save cell image if in debug mode
+            from core.screencapture import get_debug_mode
+            if get_debug_mode():
+                try:
+                    # Ensure directory exists
+                    cell_dir = "./assets/screenshots/cells"
+                    if not os.path.exists(cell_dir):
+                        os.makedirs(cell_dir, exist_ok=True)
+
+                    img = Image.fromarray(cell)
+                    img.save("./assets/screenshots/cells/cell_{}_{}.png".format(row, col))
+                except Exception as e:
+                    logging.error(f"Error saving cell image {row}_{col}: {str(e)}")
+                    # Continue execution even if saving fails
 
             detected = table_match_on_color(cell)
             outcomes.append(detected)
@@ -169,10 +195,10 @@ def non_maximum_suppression(boxes, overlap_threshold=0.5):
     y1 = boxes[:, 1]
     x2 = boxes[:, 0] + boxes[:, 2]
     y2 = boxes[:, 1] + boxes[:, 3]
-    
+
     # Compute the area of the boxes
     areas = (x2 - x1) * (y2 - y1)
-    
+
     # Sort the boxes by their bottom-right y-coordinate
     order = np.argsort(y2)
 
@@ -181,20 +207,20 @@ def non_maximum_suppression(boxes, overlap_threshold=0.5):
         # Select the box with the largest area (last in the sorted list)
         i = order[-1]
         filtered_boxes.append(boxes[i])
-        
+
         # Compute IoU for all other boxes
         xx1 = np.maximum(x1[i], x1[order[:-1]])
         yy1 = np.maximum(y1[i], y1[order[:-1]])
         xx2 = np.minimum(x2[i], x2[order[:-1]])
         yy2 = np.minimum(y2[i], y2[order[:-1]])
-        
+
         # Compute width and height of the overlap
         w = np.maximum(0, xx2 - xx1)
         h = np.maximum(0, yy2 - yy1)
-        
+
         # Compute IoU
         overlap = (w * h) / (areas[order[:-1]] + areas[i] - (w * h))
-        
+
         # Remove boxes with IoU above the threshold
         order = order[np.where(overlap <= overlap_threshold)[0]]
 
@@ -212,7 +238,7 @@ def save_debug_image_with_boxes(self, screenshot, table_boxes, output_path="./da
     for (x, y, w, h) in table_boxes:
         # Draw rectangles around detected tables
         cv2.rectangle(debug_image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green box
-    
+
     # Save the debug image
     cv2.imwrite(output_path, debug_image)
     logging.info(f"Debug image saved: {output_path}")

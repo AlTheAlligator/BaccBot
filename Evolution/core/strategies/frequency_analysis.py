@@ -97,22 +97,10 @@ class FrequencyAnalysisStrategy:
 
         # Only bet if confidence exceeds threshold
         if confidence >= self.confidence_threshold:
-            self.consecutive_skips = 0
-            self.total_bets += 1
-            logger.debug(f"Betting {bet} with confidence {confidence:.3f}")
             return bet
         else:
-            self.consecutive_skips += 1
-
-            # Force a bet if we've skipped too many in a row
-            if self.consecutive_skips >= self.max_consecutive_skips:
-                self.consecutive_skips = 0
-                self.total_bets += 1
-                logger.debug(f"Forcing bet {bet} after {self.max_consecutive_skips} skips")
-                return bet
-
-            logger.debug(f"Skipping bet, confidence {confidence:.3f} < threshold {self.confidence_threshold}")
-            return 'SKIP'
+            logger.debug(f"Confidence too low: {confidence:.3f} < {self.confidence_threshold}")
+            return "SKIP"
 
     def _update_frequencies(self, outcomes):
         """
@@ -158,7 +146,6 @@ class FrequencyAnalysisStrategy:
         probs = self._calculate_base_probabilities()
 
         # Apply trend adjustment if enabled
-        trend_factor = 0
         if self.use_trend_adjustment:
             trend_factor = self._calculate_trend_factor(outcomes)
             probs['P'] += trend_factor * self.trend_weight
@@ -170,7 +157,7 @@ class FrequencyAnalysisStrategy:
 
         # Apply pattern-based adjustment if enabled
         pattern_factor = 0
-        if self.use_pattern_adjustment and len(outcomes) >= self.pattern_length:
+        if self.use_pattern_adjustment:
             pattern = tuple(outcomes[-self.pattern_length:])
             pattern_factor = self._calculate_pattern_factor(pattern)
 
@@ -316,7 +303,10 @@ class FrequencyAnalysisStrategy:
 
         if total > 0:
             p_prob = counts.get('P', 0) / total
-            return 2 * p_prob - 1  # Scale to -1 to 1 range
+            b_prob = counts.get('B', 0) / total
+
+            # Calculate factor, scaled to -1 to 1 range
+            return (p_prob - b_prob) * 2
 
         return 0
 
@@ -330,11 +320,13 @@ class FrequencyAnalysisStrategy:
         Returns:
             tuple: (is_significant, p_value)
         """
-        if len(outcomes) < 10:  # Need a minimum sample size
-            return False, 1.0
+        # Use the short window for significance testing
+        recent = [o for o in outcomes[-self.short_window:] if o in ['P', 'B']]
 
-        # Use recent outcomes for significance testing
-        recent = outcomes[-min(len(outcomes), 30):]
+        if len(recent) < 5:  # Need reasonable sample size
+            return False, 0.5
+
+        # Count occurrences
         p_count = recent.count('P')
         b_count = recent.count('B')
         total = p_count + b_count

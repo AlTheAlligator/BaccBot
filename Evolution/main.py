@@ -34,6 +34,7 @@ def main():
     parser.add_argument('-t', '--test-mode', action='store_true', help='Run in test mode: place minimal bets every 3rd game only')
     parser.add_argument('--strategy', choices=['original', 'frequency_analysis'], default='original',
                       help='Betting strategy to use (default: original)')
+    parser.add_argument('--debug', action='store_true', help='Run in debug mode: save screenshots to disk for debugging')
     args = parser.parse_args()
 
     if args.second_shoe and args.drawdown is None:
@@ -56,6 +57,13 @@ def main():
         logging.info("Running with frequency analysis strategy")
     else:
         logging.info("Running with original strategy")
+
+    # Set debug mode in screencapture module
+    from core.screencapture import set_debug_mode
+    set_debug_mode(args.debug)
+
+    if args.debug:
+        logging.info("Running in debug mode: screenshots will be saved to disk")
 
     try:
         # Initialize and run state machine with second shoe flag, drawdown, and strategy

@@ -3,7 +3,7 @@ import logging
 import time
 import random
 from core.nameless import (
-    press_tie_btn, press_banker_start_btn, press_player_start_btn, 
+    press_tie_btn, press_banker_start_btn, press_player_start_btn,
     press_banker_only_btn, press_player_only_btn
 )
 from core.strategy import analyze_first_6, get_outcomes_without_not_played
@@ -13,17 +13,18 @@ class InitialAnalysisState(State):
     def __init__(self, name: str, context):
         super().__init__(name, context)
         self.consecutive_checks = 0
-        
+
     def execute(self):
         logging.info("State: Initial Analysis")
-        
+
         # Initialize outcomes if empty
         if not self.context.game.outcomes:
+            # Pass True to indicate the game is running
             raw_outcomes = capture_history(True)
             self.context.game.outcomes = get_outcomes_without_not_played(raw_outcomes)
-        
+
         action = analyze_first_6(self.context.game.outcomes, self.context.game.bias, 0)
-        
+
         if action == "Skip":
             logging.info("Skipping the shoe.")
             time.sleep(random.uniform(0.2, 0.3))
@@ -44,7 +45,7 @@ class InitialAnalysisState(State):
 class InitializeLineState(State):
     def __init__(self, name: str, context):
         super().__init__(name, context)
-        
+
     def execute(self):
         logging.info("State: Initialize Line")
 
@@ -58,5 +59,5 @@ class InitializeLineState(State):
             press_player_start_btn(True)
             press_tie_btn(True)
             press_player_only_btn(True)
-        
+
         return "wait_next_game"

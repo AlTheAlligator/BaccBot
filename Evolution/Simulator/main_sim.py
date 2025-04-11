@@ -790,7 +790,9 @@ def _calculate_strategy_metrics(strategy, param_str, results_df, description=Non
         win_rate = results_df['win_rate'].mean() * 100
         profitable_lines = (results_df['profit'] > 0).mean() * 100
         max_drawdown = results_df['profit'].min()
+        max_consecutive_wins = results_df['max_consecutive_wins'].max()
         avg_consecutive_wins = results_df['max_consecutive_wins'].mean()
+        max_consecutive_losses = results_df['max_consecutive_losses'].max()
         avg_consecutive_losses = results_df['max_consecutive_losses'].mean()
         avg_win_streak = results_df['max_win_streak'].mean()
         avg_loss_streak = results_df['max_loss_streak'].mean()
@@ -823,7 +825,9 @@ def _calculate_strategy_metrics(strategy, param_str, results_df, description=Non
             'Profitable Lines %': profitable_lines,
             'Betting Frequency %': betting_frequency,
             'Max Drawdown': max_drawdown,
+            'Max Consecutive Wins': max_consecutive_wins,
             'Avg Consecutive Wins': avg_consecutive_wins,
+            'Max Consecutive Losses': max_consecutive_losses,
             'Avg Consecutive Losses': avg_consecutive_losses,
             'Avg Win Streak': avg_win_streak,
             'Avg Loss Streak': avg_loss_streak,
@@ -875,6 +879,9 @@ def _create_strategy_visualizations(summary_df, strategies_to_run, all_results, 
             print(f"   Profitable Lines: {row['Profitable Lines %']:.1f}%")
             print(f"   Betting Frequency: {row['Betting Frequency %']:.1f}%")
             print(f"   Max Drawdown: ${row['Max Drawdown']:.2f}")
+            print(f"   Consecutive Wins/Losses: {row['Avg Consecutive Wins']:.1f}/{row['Avg Consecutive Losses']:.1f}")
+            print(f"   Max consecutive wins/losses: {row['Max Consecutive Wins']:.1f}/{row['Max Consecutive Losses']:.1f}")
+
             print(f"   Risk Metrics - Sharpe: {row['Sharpe Ratio']:.2f}, Sortino: {row['Sortino Ratio']:.2f}")
             print("-" * 100)
 
@@ -1037,6 +1044,7 @@ def _print_top_strategies_by_metrics(summary_df, category_profit):
         summary_by_profit = summary_df.sort_values('Total Profit', ascending=False)
         summary_by_sharpe = summary_df.sort_values('Sharpe Ratio', ascending=False)
         summary_by_win_rate = summary_df.sort_values('Win Rate', ascending=False)
+        summary_by_max_consecutive_losses = summary_df.sort_values('Max Consecutive Losses', ascending=True)
 
         metrics = {
             'Total Profit': ('${:.2f}', summary_by_profit),
@@ -1045,7 +1053,8 @@ def _print_top_strategies_by_metrics(summary_df, category_profit):
             'Sharpe Ratio': ('{:.2f}', summary_by_sharpe),
             'Sortino Ratio': ('{:.2f}', summary_df.sort_values('Sortino Ratio', ascending=False)),
             'Max Drawdown': ('${:.2f}', summary_df.sort_values('Max Drawdown', ascending=False)),
-            'Profitable Lines %': ('{:.2f}%', summary_df.sort_values('Profitable Lines %', ascending=False))
+            'Profitable Lines %': ('{:.2f}%', summary_df.sort_values('Profitable Lines %', ascending=False)),
+            'Max Consecutive Losses': ('{:.1f}', summary_by_max_consecutive_losses)
         }
 
         for metric, (format_str, sorted_df) in metrics.items():
@@ -1086,17 +1095,23 @@ def simulate_with_optimized_parameters(selected_strategies=None, bet_size=50):
 def generate_parameter_combinations(base_params, param_ranges):
     """
     Generate combinations of parameters for testing using min/max ranges and number of steps.
+    Supports nested parameter structures.
 
     Args:
         base_params (dict): Base parameter set to modify
         param_ranges (dict): Dictionary mapping parameter names to ranges.
             Each range should be a dict with 'min', 'max', and 'steps' keys,
-            or 'values' for explicit list of values to test.
+            or 'values' for explicit list of values to test,
+            or a nested dictionary of parameter ranges for nested parameters.
             Example:
             {
                 'window_size': {'min': 10, 'max': 30, 'steps': 5},
                 'confidence_threshold': {'min': 0.5, 'max': 0.7, 'steps': 5},
-                'discrete_param': {'values': [True, False]}  # For discrete values
+                'discrete_param': {'values': [True, False]},  # For discrete values
+                'nested_params': {  # For nested parameters
+                    'param1': {'min': 1, 'max': 5, 'steps': 5},
+                    'param2': {'values': [True, False]}
+                }
             }
 
     Returns:
@@ -1105,12 +1120,16 @@ def generate_parameter_combinations(base_params, param_ranges):
     import numpy as np
     import itertools
     print("Generating parameter combinations...")
-    # Generate values for each parameter
-    param_values = {}
-    for param_name, range_info in param_ranges.items():
+
+    def _is_range_dict(d):
+        """Check if a dictionary is a parameter range specification."""
+        return 'values' in d or ('min' in d and 'max' in d and 'steps' in d)
+
+    def _generate_values_for_range(range_info):
+        """Generate values for a single parameter range."""
         if 'values' in range_info:
             # Use explicit values if provided
-            param_values[param_name] = range_info['values']
+            return range_info['values']
         else:
             # Generate evenly spaced values between min and max
             min_val = range_info['min']
@@ -1124,9 +1143,36 @@ def generate_parameter_combinations(base_params, param_ranges):
                 # For float parameters
                 values = np.linspace(min_val, max_val, steps)
             else:
-                raise ValueError(f"Invalid parameter type for {param_name}")
+                raise ValueError(f"Invalid parameter type with min={min_val}, max={max_val}")
 
-            param_values[param_name] = values.tolist()
+            return values.tolist()
+
+    def _flatten_param_ranges(param_ranges, prefix='', result=None):
+        """Flatten nested parameter ranges into a flat dictionary."""
+        if result is None:
+            result = {}
+
+        for key, value in param_ranges.items():
+            full_key = f"{prefix}{key}" if prefix else key
+
+            if _is_range_dict(value):
+                # This is a parameter range specification
+                result[full_key] = value
+            elif isinstance(value, dict):
+                # This is a nested dictionary of parameters
+                _flatten_param_ranges(value, f"{full_key}.", result)
+            else:
+                raise ValueError(f"Invalid parameter range specification for {full_key}")
+
+        return result
+
+    # Flatten the parameter ranges
+    flat_param_ranges = _flatten_param_ranges(param_ranges)
+
+    # Generate values for each parameter
+    param_values = {}
+    for param_name, range_info in flat_param_ranges.items():
+        param_values[param_name] = _generate_values_for_range(range_info)
 
     # Get all parameter names and their possible values
     param_names = list(param_values.keys())
@@ -1140,11 +1186,26 @@ def generate_parameter_combinations(base_params, param_ranges):
     param_sets = []
     for combo in combinations:
         # Start with base parameters
-        params = base_params.copy()
+        params = base_params.copy() if base_params else {}
 
         # Update with current combination
         for name, value in zip(param_names, combo):
-            params[name] = value
+            # Handle nested parameters using dot notation
+            if '.' in name:
+                parts = name.split('.')
+                current = params
+
+                # Navigate to the correct nested level
+                for part in parts[:-1]:
+                    if part not in current:
+                        current[part] = {}
+                    current = current[part]
+
+                # Set the value at the deepest level
+                current[parts[-1]] = value
+            else:
+                # This is a top-level parameter
+                params[name] = value
 
         param_sets.append(params)
 
@@ -1264,11 +1325,23 @@ def test_parameter_combinations(strategy, param_ranges=None, bet_size=50, base_p
             logger.info(f"Loaded parameter ranges from strategy file for {strategy.value}")
 
             # Print the parameters that will be tested
-            for param_name, range_info in param_ranges.items():
-                if 'values' in range_info:
-                    logger.info(f"Parameter {param_name}: {range_info['values']}")
-                else:
-                    logger.info(f"Parameter {param_name}: {range_info['min']} to {range_info['max']} ({range_info['steps']} steps)")
+            def _log_param_ranges(ranges, prefix=''):
+                """Recursively log parameter ranges, handling nested structures."""
+                for param_name, range_info in ranges.items():
+                    full_name = f"{prefix}{param_name}" if prefix else param_name
+                    if 'values' in range_info:
+                        logger.info(f"Parameter {full_name}: {range_info['values']}")
+                    elif 'min' in range_info and 'max' in range_info and 'steps' in range_info:
+                        logger.info(f"Parameter {full_name}: {range_info['min']} to {range_info['max']} ({range_info['steps']} steps)")
+                    elif isinstance(range_info, dict):
+                        # This is a nested parameter structure
+                        logger.info(f"Parameter {full_name}: <nested parameters>")
+                        _log_param_ranges(range_info, f"{full_name}.")
+                    else:
+                        logger.warning(f"Unknown parameter range format for {full_name}: {range_info}")
+
+            # Log all parameter ranges
+            _log_param_ranges(param_ranges)
         except Exception as e:
             logger.error(f"Error loading parameter ranges for {strategy.value}: {e}")
             logger.error("Please provide parameter ranges explicitly.")
@@ -1563,12 +1636,16 @@ def _run_genetic_algorithm(strategy, param_ranges, base_params, bet_size, histor
 
     logger.info(f"Starting genetic algorithm with population size {population_size} and {generations} generations")
 
-    # Generate parameter values for each parameter
-    param_values = {}
-    for param_name, range_info in param_ranges.items():
+    # Reuse the helper functions from generate_parameter_combinations
+    def _is_range_dict(d):
+        """Check if a dictionary is a parameter range specification."""
+        return 'values' in d or ('min' in d and 'max' in d and 'steps' in d)
+
+    def _generate_values_for_range(range_info):
+        """Generate values for a single parameter range."""
         if 'values' in range_info:
             # Use explicit values if provided
-            param_values[param_name] = range_info['values']
+            return range_info['values']
         else:
             # Generate evenly spaced values between min and max
             min_val = range_info['min']
@@ -1582,15 +1659,57 @@ def _run_genetic_algorithm(strategy, param_ranges, base_params, bet_size, histor
                 # For float parameters
                 values = np.linspace(min_val, max_val, steps)
             else:
-                raise ValueError(f"Invalid parameter type for {param_name}")
+                raise ValueError(f"Invalid parameter type with min={min_val}, max={max_val}")
 
-            param_values[param_name] = values.tolist()
+            return values.tolist()
+
+    def _flatten_param_ranges(param_ranges, prefix='', result=None):
+        """Flatten nested parameter ranges into a flat dictionary."""
+        if result is None:
+            result = {}
+
+        for key, value in param_ranges.items():
+            full_key = f"{prefix}{key}" if prefix else key
+
+            if _is_range_dict(value):
+                # This is a parameter range specification
+                result[full_key] = value
+            elif isinstance(value, dict):
+                # This is a nested dictionary of parameters
+                _flatten_param_ranges(value, f"{full_key}.", result)
+            else:
+                raise ValueError(f"Invalid parameter range specification for {full_key}")
+
+        return result
+
+    # Flatten the parameter ranges
+    flat_param_ranges = _flatten_param_ranges(param_ranges)
+
+    # Generate values for each parameter
+    param_values = {}
+    for param_name, range_info in flat_param_ranges.items():
+        param_values[param_name] = _generate_values_for_range(range_info)
 
     # Function to create a random individual
     def create_individual():
-        params = base_params.copy()
+        params = base_params.copy() if base_params else {}
         for param_name, values in param_values.items():
-            params[param_name] = random.choice(values)
+            # Handle nested parameters using dot notation
+            if '.' in param_name:
+                parts = param_name.split('.')
+                current = params
+
+                # Navigate to the correct nested level
+                for part in parts[:-1]:
+                    if part not in current:
+                        current[part] = {}
+                    current = current[part]
+
+                # Set the value at the deepest level
+                current[parts[-1]] = random.choice(values)
+            else:
+                # This is a top-level parameter
+                params[param_name] = random.choice(values)
         return params
 
     # Create initial population
@@ -1598,10 +1717,19 @@ def _run_genetic_algorithm(strategy, param_ranges, base_params, bet_size, histor
 
     # Function to select parents based on fitness
     def select_parents(population, fitnesses):
-        # Tournament selection
+        # Get indices of individuals sorted by fitness (descending)
+        sorted_indices = sorted(range(len(fitnesses)), key=lambda i: fitnesses[i], reverse=True)
+
+        # Select only from the top 20% of individuals
+        elite_count = max(2, int(len(population) * 0.2))  # At least 2 individuals
+        elite_indices = sorted_indices[:elite_count]
+
+        # Tournament selection from the elite individuals
         def tournament_select():
-            # Select 3 random individuals and pick the best
-            candidates = random.sample(range(len(population)), min(3, len(population)))
+            # Select 2 random individuals from the elite group and pick the best
+            if len(elite_indices) <= 1:
+                return population[elite_indices[0]]
+            candidates = random.sample(elite_indices, min(2, len(elite_indices)))
             best_idx = max(candidates, key=lambda idx: fitnesses[idx])
             return population[best_idx]
 
@@ -1609,21 +1737,78 @@ def _run_genetic_algorithm(strategy, param_ranges, base_params, bet_size, histor
 
     # Function to crossover two parents
     def crossover(parent1, parent2):
-        child = base_params.copy()
+        child = base_params.copy() if base_params else {}
+
+        # Handle parameters and initialize nested dictionaries
         for param_name in param_values.keys():
-            # 50% chance to inherit from each parent
-            if random.random() < 0.5:
-                child[param_name] = parent1[param_name]
+            if '.' in param_name:
+                # This is a nested parameter
+                parts = param_name.split('.')
+
+                # Get parent values, handling the case where the nested structure might not exist
+                parent1_value = _get_nested_value(parent1, parts)
+                parent2_value = _get_nested_value(parent2, parts)
+
+                # 50% chance to inherit from each parent if both have the value
+                if parent1_value is not None and parent2_value is not None:
+                    if random.random() < 0.5:
+                        _set_nested_value(child, parts, parent1_value)
+                    else:
+                        _set_nested_value(child, parts, parent2_value)
+                # Otherwise use the one that exists, or a random value if neither exists
+                elif parent1_value is not None:
+                    _set_nested_value(child, parts, parent1_value)
+                elif parent2_value is not None:
+                    _set_nested_value(child, parts, parent2_value)
+                else:
+                    # Neither parent has this value, use a random value from the range
+                    _set_nested_value(child, parts, random.choice(param_values[param_name]))
             else:
-                child[param_name] = parent2[param_name]
+                # This is a top-level parameter
+                # 50% chance to inherit from each parent
+                if random.random() < 0.5 and param_name in parent1:
+                    child[param_name] = parent1[param_name]
+                elif param_name in parent2:
+                    child[param_name] = parent2[param_name]
+                else:
+                    # Neither parent has this parameter, use a random value
+                    child[param_name] = random.choice(param_values[param_name])
         return child
+
+    # Helper function to get a nested value from a dictionary
+    def _get_nested_value(d, keys):
+        """Get a value from a nested dictionary using a list of keys."""
+        current = d
+        for key in keys[:-1]:
+            if key not in current:
+                return None
+            current = current[key]
+        return current.get(keys[-1]) if keys[-1] in current else None
+
+    # Helper function to set a nested value in a dictionary
+    def _set_nested_value(d, keys, value):
+        """Set a value in a nested dictionary using a list of keys."""
+        current = d
+        for key in keys[:-1]:
+            if key not in current:
+                current[key] = {}
+            current = current[key]
+        current[keys[-1]] = value
 
     # Function to mutate an individual
     def mutate(individual):
         for param_name, values in param_values.items():
             # Mutate with probability mutation_rate
             if random.random() < mutation_rate:
-                individual[param_name] = random.choice(values)
+                if '.' in param_name:
+                    # This is a nested parameter
+                    parts = param_name.split('.')
+
+                    # Mutate the nested parameter
+                    _set_nested_value(individual, parts, random.choice(values))
+                else:
+                    # This is a top-level parameter
+                    individual[param_name] = random.choice(values)
         return individual
 
     # Run the genetic algorithm
@@ -1709,16 +1894,30 @@ def _run_genetic_algorithm(strategy, param_ranges, base_params, bet_size, histor
         # Create next generation
         new_population = []
 
-        # Elitism: keep the best individual
-        if best_individual is not None:
-            new_population.append(best_individual.copy())
+        # Sort population by fitness (descending)
+        sorted_indices = sorted(range(len(fitnesses)), key=lambda i: fitnesses[i], reverse=True)
 
-        # Create rest of population through selection, crossover, and mutation
+        # Elitism: keep the top 20% of individuals
+        elite_count = max(1, int(population_size * 0.2))  # At least 1 individual
+        elite_count = min(elite_count, len(sorted_indices))
+
+        for i in range(elite_count):
+            idx = sorted_indices[i]
+            new_population.append(population[idx].copy())
+
+        # Create the rest of the population through selection, crossover, and mutation
+        # from the top 20% of individuals
         while len(new_population) < population_size:
-            parent1, parent2 = select_parents(population, fitnesses)
-            child = crossover(parent1, parent2)
-            child = mutate(child)
-            new_population.append(child)
+            # 80% chance to create a new child through crossover and mutation
+            if random.random() < 0.8:
+                parent1, parent2 = select_parents(population, fitnesses)
+                child = crossover(parent1, parent2)
+                child = mutate(child)
+                new_population.append(child)
+            else:
+                # 20% chance to create a completely new random individual for diversity
+                new_individual = create_individual()
+                new_population.append(new_individual)
 
         # Replace old population
         population = new_population
@@ -1891,7 +2090,14 @@ if __name__ == "__main__":
         BettingStrategy.TIME_SERIES_FORECASTING,
         BettingStrategy.TRANSFER_LEARNING,
         BettingStrategy.TREND_CONFIRMATION,
-        BettingStrategy.VOLATILITY_ADAPTIVE
+        BettingStrategy.VOLATILITY_ADAPTIVE,
+        # New strategies
+        BettingStrategy.NEURAL_OSCILLATOR,
+        BettingStrategy.ADAPTIVE_MOMENTUM,
+        BettingStrategy.SYMBOLIC_DYNAMICS,
+        BettingStrategy.BAYESIAN_NETWORK,
+        BettingStrategy.REINFORCEMENT_META_LEARNING,
+        BettingStrategy.HYBRID_FREQUENCY_VOLATILITY
     ]
 
     # --- Load historical data ONCE ---
@@ -1928,22 +2134,22 @@ if __name__ == "__main__":
     # Run with flat betting size
     bet_size = 1
     print(f"\nRunning simulation with flat bet size of ${bet_size}...")
-    #try:
+    try:
         # Use the unified simulation function
-        #summary_df, results = simulate_strategies(
-        #    historical_data_df,
-        #    selected_strategies=optimized_strategies,
-        #    bet_size=bet_size,
-        #    use_optimized_params=True
-        #)
+        summary_df, results = simulate_strategies(
+            historical_data_df,
+            selected_strategies=optimized_strategies,
+            bet_size=bet_size,
+            use_optimized_params=True
+        )
 
-        #if len(summary_df) == 0:
-        #    print("No results were generated. Check the log for details.")
-        #else:
-        #    print(f"Simulation completed successfully with {len(summary_df)} strategy variants.")
-    #except Exception as e:
-    #    logger.error(f"Error running simulation: {e}", exc_info=True)
-    #    print(f"An error occurred: {e}")
+        if len(summary_df) == 0:
+            print("No results were generated. Check the log for details.")
+        else:
+            print(f"Simulation completed successfully with {len(summary_df)} strategy variants.")
+    except Exception as e:
+        logger.error(f"Error running simulation: {e}", exc_info=True)
+        print(f"An error occurred: {e}")
 
     #exit(0)  # Exit the script after running the simulation
 
@@ -1952,19 +2158,19 @@ if __name__ == "__main__":
     from strategies import get_parameter_ranges
 
     # Select a strategy to test
-    strategy = BettingStrategy.CHAOS_THEORY
+    strategy = BettingStrategy.FREQUENCY_ANALYSIS
 
     # Get parameter ranges for the selected strategy
     param_ranges = get_parameter_ranges(strategy)
     print(f"\nParameter ranges for {strategy.value}:")
 
     # Print the parameters that will be tested
-    if param_ranges:
-        for param_name, range_info in param_ranges.items():
-            if 'values' in range_info:
-                print(f"  {param_name}: {range_info['values']}")
-            else:
-                print(f"  {param_name}: {range_info['min']} to {range_info['max']} ({range_info['steps']} steps)")
+    #if param_ranges:
+    #    for param_name, range_info in param_ranges.items():
+    #        if 'values' in range_info:
+    #            print(f"  {param_name}: {range_info['values']}")
+    #        else:
+    #            print(f"  {param_name}: {range_info['min']} to {range_info['max']} ({range_info['steps']} steps)")
 
     print(f"\nTesting parameter combinations for {strategy.value}...")
 
@@ -1979,7 +2185,7 @@ if __name__ == "__main__":
         bet_size=1,  # Use small bet size for testing
         use_parallel=use_parallel,
         use_genetic=use_genetic,
-        population_size=200,  # Larger population for better diversity
+        population_size=500,  # Larger population for better diversity
         generations=10,      # More generations to see improvement
         mutation_rate=0.2
     )

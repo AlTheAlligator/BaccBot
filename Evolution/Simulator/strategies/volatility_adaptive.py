@@ -43,6 +43,7 @@ class VolatilityAdaptiveStrategy(BaseStrategy):
         # Tracking volatility history
         self.volatility_history = deque(maxlen=100)
         self.current_volatility = 0.5  # Default mid-range volatility
+        self.last_confidence = 0  # Last confidence level
         
         # Tracking state
         self.outcome_changes = deque(maxlen=100)  # 1 for change, 0 for continuation
@@ -102,6 +103,7 @@ class VolatilityAdaptiveStrategy(BaseStrategy):
                     f"volatility={self.current_volatility:.2f}, mode={self.analysis_mode}, "
                     f"threshold={adjusted_threshold:.3f}")
         
+        self.last_confidence = p_prob if p_prob > b_prob else b_prob
         # Make decision based on probabilities and adjusted threshold
         if p_prob > b_prob and p_prob > adjusted_threshold:
             return "P"

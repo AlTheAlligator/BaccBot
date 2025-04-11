@@ -121,17 +121,17 @@ OPTIMIZED_PARAMETERS = {
     "volatility_adaptive": {
         "short_window": 6,
         "medium_window": 12,
-        "long_window": 57,
+        "long_window": 42,
         "min_samples": 3,
-        "high_volatility_threshold": 0.6473,
-        "low_volatility_threshold": 0.3526,
-        "confidence_threshold_base": 0.4315,
-        "confidence_scaling": 0.31,
-        "banker_bias": 0.02,
+        "high_volatility_threshold": 0.76,
+        "low_volatility_threshold": 0.1,
+        "confidence_threshold_base": 0.48,
+        "confidence_scaling": 0.35,
+        "banker_bias": 0.0163,
         "use_adaptive_window": True,
         "statistical_mode": "combined",
-        "pattern_length": 6,
-        "min_pattern_occurrences": 3
+        "pattern_length": 4,
+        "min_pattern_occurrences": 6
     },
     
     # Bayesian Inference Strategy - updates probabilities with Bayes' rule
@@ -243,6 +243,46 @@ OPTIMIZED_PARAMETERS = {
         "pattern_length": 4,
         "window_sizes": [4, 5, 6],
         "banker_bias": 0.011
+    },
+    # Add to OPTIMIZED_PARAMETERS dictionary
+    "hybrid_frequency_volatility": {
+        "performance_window": 6,
+        "min_confidence_diff": 0.05,
+        "performance_weight": 0.5,
+        "confidence_weight": 0.5,
+        # Frequency Analysis specific parameters
+        "frequency_params": {
+            "short_window": 7,
+            "medium_window": 11,
+            "long_window": 19,
+            "min_samples": 6,
+            "confidence_threshold": 0.2285,
+            "pattern_length": 4,
+            "banker_bias": 0.0164,
+            "use_trend_adjustment": False,
+            "trend_weight": 0.4095,
+            "use_pattern_adjustment": True,
+            "pattern_weight": 0.2279,
+            "use_chi_square": False,
+            "significance_level": 0.8455,
+            "clustering_method": "multi_window"
+        },
+        # Volatility Adaptive specific parameters
+        "volatility_params": {
+            "short_window": 6,
+            "medium_window": 12,
+            "long_window": 42,
+            "min_samples": 3,
+            "high_volatility_threshold": 0.76,
+            "low_volatility_threshold": 0.1,
+            "confidence_threshold_base": 0.48,
+            "confidence_scaling": 0.35,
+            "banker_bias": 0.0163,
+            "use_adaptive_window": True,
+            "statistical_mode": "combined",
+            "pattern_length": 4,
+            "min_pattern_occurrences": 6
+        }
     }
 }
 

@@ -40,6 +40,11 @@ from .information_theory import InformationTheoryStrategy
 from .quantum_inspired import QuantumInspiredStrategy
 from .fractal_analysis import FractalAnalysisStrategy
 from .evolutionary_game_theory import EvolutionaryGameTheoryStrategy
+from .neural_oscillator import NeuralOscillatorStrategy
+from .adaptive_momentum import AdaptiveMomentumStrategy
+from .symbolic_dynamics import SymbolicDynamicsStrategy
+from .bayesian_network import BayesianNetworkStrategy
+from .reinforcement_meta_learning import ReinforcementMetaLearningStrategy
 
 # Import the BettingStrategy enum
 from .betting_strategy import BettingStrategy

@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image
 from core.analysis import non_maximum_suppression
 import logging
+import os
 
 # Configure Tesseract
 pytesseract.pytesseract.tesseract_cmd = f'C:\Program Files\Tesseract-OCR\\tesseract.exe'  # Update with your Tesseract path
@@ -57,24 +58,46 @@ def preprocess_image_v2(img, use_otsu=False, use_clahe=False, use_inverse=True):
 
     return thresh
 
-def get_game_result(image_path):
+def get_game_result(image):
     """
     Extract the game result (BANKER/PLAYER/TIE) from the game result area
+
+    Args:
+        image: Either a PIL Image object, OpenCV image, or a path to an image file
+
+    Returns:
+        String representing the game result: 'B', 'P', 'T', or 'Waiting for Results'
     """
-    # Load the image
-    if isinstance(image_path, str):
-        img = cv2.imread(image_path)
+    # Handle different input types
+    if isinstance(image, str):
+        # It's a file path
+        img = cv2.imread(image)
+    elif isinstance(image, Image.Image):
+        # It's a PIL Image
+        img = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
     else:
-        img = image_path
+        # Assume it's already an OpenCV image
+        img = image
 
     if img is None:
         return "Waiting for Results"
 
     # Preprocess with Otsu thresholding
     thresh = preprocess_image(img, use_otsu=True)
-    
-    # Save debug image
-    Image.fromarray(thresh).save("./assets/screenshots/result_thresholded.png")
+
+    # Save debug image if needed
+    from core.screencapture import get_debug_mode
+    if get_debug_mode():
+        try:
+            # Ensure directory exists
+            debug_dir = "./assets/screenshots"
+            if not os.path.exists(debug_dir):
+                os.makedirs(debug_dir, exist_ok=True)
+
+            Image.fromarray(thresh).save("./assets/screenshots/result_thresholded.png")
+        except Exception as e:
+            logging.error(f"Error saving result thresholded image: {str(e)}")
+            # Continue execution even if saving fails
 
     # Resize for better OCR accuracy
     resized = cv2.resize(thresh, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
@@ -82,25 +105,53 @@ def get_game_result(image_path):
     # Perform OCR
     text = pytesseract.image_to_string(resized, config='--psm 6 -c tessedit_char_whitelist=BANKERPLYTIE')
     text = text.strip()
-    
+
     if text == "BANKER":
         return "B"
     if text == "PLAYER":
         return "P"
     if text == "TIE":
         return "T"
-        
+
     return "Waiting for Results"
 
-def extract_cubes_and_numbers(image_path):
-    # Load the image
-    img = cv2.imread(image_path)
-    
+def extract_cubes_and_numbers(image):
+    """Extract cubes and their numbers from an image
+
+    Args:
+        image: Either a PIL Image object, OpenCV image, or a path to an image file
+
+    Returns:
+        Tuple of (cube_count, extracted_numbers)
+    """
+    # Handle different input types
+    if isinstance(image, str):
+        # It's a file path
+        img = cv2.imread(image)
+    elif isinstance(image, Image.Image):
+        # It's a PIL Image
+        img = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    else:
+        # Assume it's already an OpenCV image
+        img = image
+
     # Use common preprocessing
     thresh = preprocess_image(img)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # We need both thresh and gray
-    
-    Image.fromarray(thresh).save("./assets/screenshots/cubes_thresholded.png")
+
+    # Save debug image if needed
+    from core.screencapture import get_debug_mode
+    if get_debug_mode():
+        try:
+            # Ensure directory exists
+            debug_dir = "./assets/screenshots"
+            if not os.path.exists(debug_dir):
+                os.makedirs(debug_dir, exist_ok=True)
+
+            Image.fromarray(thresh).save("./assets/screenshots/cubes_thresholded.png")
+        except Exception as e:
+            logging.error(f"Error saving cubes thresholded image: {str(e)}")
+            # Continue execution even if saving fails
 
     # Find contours
     contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -140,24 +191,44 @@ def extract_cubes_and_numbers(image_path):
 
     return len(cubes), numbers
 
-def extract_bet_size(image_path):
+def extract_bet_size(image):
     """
     Extract the bet size from a specific region in the app.
 
     Args:
-    - image_path: Path to the screenshot of the app.
+        image: Either a PIL Image object, OpenCV image, or a path to an image file
 
     Returns:
-    - bet_size: Detected bet size as an integer, or None if not found.
+        bet_size: Detected bet size as an integer, or None if not found.
     """
-    # Load the image
-    img = cv2.imread(image_path)
-    
+    # Handle different input types
+    if isinstance(image, str):
+        # It's a file path
+        img = cv2.imread(image)
+    elif isinstance(image, Image.Image):
+        # It's a PIL Image
+        img = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    else:
+        # Assume it's already an OpenCV image
+        img = image
+
     # Use common preprocessing with CLAHE
     thresh = preprocess_image(img, use_clahe=True)
-    
-    Image.fromarray(thresh).save("./assets/screenshots/bet_thresholded.png")
-    
+
+    # Save debug image if needed
+    from core.screencapture import get_debug_mode
+    if get_debug_mode():
+        try:
+            # Ensure directory exists
+            debug_dir = "./assets/screenshots"
+            if not os.path.exists(debug_dir):
+                os.makedirs(debug_dir, exist_ok=True)
+
+            Image.fromarray(thresh).save("./assets/screenshots/bet_thresholded.png")
+        except Exception as e:
+            logging.error(f"Error saving bet thresholded image: {str(e)}")
+            # Continue execution even if saving fails
+
     # Resize the cube for better OCR accuracy
     bet_resized = cv2.resize(thresh, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
 
@@ -180,10 +251,10 @@ def lobby_is_speed_baccarat(screenshot):
     :return: True if Speed Baccarat is detected, False otherwise.
     """
     logging.debug("Checking for Speed Baccarat lobby...")
-    
+
     # Use noise removal and smoothing
     thresh = preprocess_image_v2(screenshot)
-    
+
     # Resize the image for better OCR accuracy
     screenshot_resized = cv2.resize(thresh, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
     # Save screenshot

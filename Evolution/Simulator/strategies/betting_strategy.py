@@ -53,3 +53,9 @@ class BettingStrategy(Enum):
     QUANTUM_INSPIRED = "quantum_inspired"  # Apply quantum computing concepts to decision making
     FRACTAL_ANALYSIS = "fractal_analysis"  # Look for self-similar patterns at different scales
     EVOLUTIONARY_GAME_THEORY = "evolutionary_game_theory"  # Model the game as a population of strategies
+    HYBRID_FREQUENCY_VOLATILITY = "hybrid_frequency_volatility"  # Combine frequency and volatility analysis
+    NEURAL_OSCILLATOR = "neural_oscillator"  # Uses neural-inspired oscillation patterns to predict outcomes
+    ADAPTIVE_MOMENTUM = "adaptive_momentum"  # Combines momentum indicators with adaptive learning
+    SYMBOLIC_DYNAMICS = "symbolic_dynamics"  # Based on symbolic dynamics from chaos theory
+    BAYESIAN_NETWORK = "bayesian_network"  # Uses Bayesian networks to model conditional dependencies
+    REINFORCEMENT_META_LEARNING = "reinforcement_meta_learning"  # Learns how to learn from past betting experiences

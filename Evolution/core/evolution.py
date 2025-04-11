@@ -9,6 +9,7 @@ def get_game_result_wrapper():
     results = capture_game_result()
     if results is None:
         return "Waiting for Results"
+    # results will be either a PIL Image or a file path depending on debug mode
     return get_game_result(results)
 
 def get_bet_allowed():
@@ -39,7 +40,7 @@ def place_bets(side, chips):
                 click_button(get_1000_bet_coordinates())
             elif chip == 2000:
                 click_button(get_2000_bet_coordinates())
-        
+
         if side == "P":
             click_button(get_player_bet_coordinates())
         elif side == "B":
