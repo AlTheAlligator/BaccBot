@@ -1,0 +1,42 @@
+Optimized parameters for majority_last_n strategy using alligator_fitness fitness function:
+{'n': 6}
+
+Top metrics:
+Fitness: 2.6751127293787103
+Sortino Ratio: 0.046
+Total Profit: $12009.60
+Win Rate: 51.91%
+Completion Rate: 63.64%
+Avg Games Per Line: 39.8
+Losing Lines: 22/99 (22.2%)
+Max Drawdown: $2721.35
+Max Closed Drawdown: $2721.35
+Avg Drawdown: $520.29
+Profitable Lines: 77.78%
+Betting Frequency: 121.31%
+
+==================================================
+VALIDATION RESULTS
+==================================================
+Training Fitness: 2.675, Validation Fitness: 1.317
+Training Profit: $12009.60, Validation Profit: $5193.45
+Training Sortino: 0.046, Validation Sortino: 0.045
+
+Detailed Validation Metrics:
+Win Rate: 52.99%
+Completion Rate: 67.44%
+Avg Games Per Line: 38.6
+Losing Lines: 9/43 (20.9%)
+Max Drawdown: $3537.30
+Max Closed Drawdown: $963.00
+Profitable Lines: 79.07%
+
+==================================================
+OVERFITTING ANALYSIS
+==================================================
+POTENTIAL OVERFITTING DETECTED
+The model performs significantly worse on validation data (fitness: 1.317) than on training data (fitness: 2.675)
+Consider using more conservative parameters or collecting more diverse training data.
+
+Fitness Function: alligator_fitness
+Custom fitness function

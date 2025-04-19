@@ -1,0 +1,40 @@
+Optimized parameters for deep_q_network strategy using alligator_fitness fitness function:
+{'learning_rate': 0.34299999999999997, 'discount_factor': 0.8610204081632653, 'exploration_rate': 0.19061224489795917, 'batch_size': 94, 'memory_size': 566}
+
+Top metrics:
+Fitness: 1.3180604589614882
+Sortino Ratio: 0.019
+Total Profit: $5259.85
+Win Rate: 52.08%
+Completion Rate: 63.64%
+Avg Games Per Line: 38.8
+Losing Lines: 28/99 (28.3%)
+Max Drawdown: $3095.40
+Max Closed Drawdown: $1491.45
+Avg Drawdown: $571.36
+Profitable Lines: 71.72%
+Betting Frequency: 122.01%
+
+==================================================
+VALIDATION RESULTS
+==================================================
+Training Fitness: 1.318, Validation Fitness: 1.443
+Training Profit: $5259.85, Validation Profit: $5834.55
+Training Sortino: 0.019, Validation Sortino: 0.052
+
+Detailed Validation Metrics:
+Win Rate: 52.11%
+Completion Rate: 67.44%
+Avg Games Per Line: 40.3
+Losing Lines: 9/43 (20.9%)
+Max Drawdown: $2116.65
+Max Closed Drawdown: $2116.65
+Profitable Lines: 79.07%
+
+==================================================
+OVERFITTING ANALYSIS
+==================================================
+Model generalizes well to validation data.
+
+Fitness Function: alligator_fitness
+Custom fitness function

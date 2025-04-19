@@ -30,12 +30,12 @@ class ChaosTheoryStrategy(BaseStrategy):
         super().__init__(simulator, params)
 
         # Strategy parameters
-        self.embedding_dimension = params.get('embedding_dimension', 3)
-        self.time_delay = params.get('time_delay', 1)
-        self.prediction_horizon = params.get('prediction_horizon', 1)
-        self.num_neighbors = params.get('num_neighbors', 5)
-        self.min_samples = params.get('min_samples', 30)  # Minimum samples before using chaos theory
-        self.banker_bias = params.get('banker_bias', 0.01)
+        self.embedding_dimension = params.get('embedding_dimension', 4)
+        self.time_delay = params.get('time_delay', 8)
+        self.prediction_horizon = params.get('prediction_horizon', 12)
+        self.num_neighbors = params.get('num_neighbors', 13)
+        self.min_samples = params.get('min_samples', 7)  # Minimum samples before using chaos theory
+        self.banker_bias = params.get('banker_bias', 0.06666666666666667)
 
         # Initialize tracking variables
         self.numeric_history = []  # 1 for Player, 0 for Banker

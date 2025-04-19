@@ -1,3 +1,8 @@
+from core.strategies.neural_oscillator import NeuralOscillatorStrategy
+from core.strategies.chaos_theory import ChaosTheoryStrategy
+from core.strategies.momentum_oscillator import MomentumOscillatorStrategy
+from core.strategies.volatility_adaptive import VolatilityAdaptiveStrategy
+from core.strategies.hybrid_frequency_volatility import HybridFrequencyVolatilityStrategy
 from core.state_machine.state_machine_base import State
 import time
 import random
@@ -21,6 +26,17 @@ class FindBetState(State):
         self.frequency_strategy = None
         if self.context.game.strategy == "frequency_analysis":
             self.frequency_strategy = FrequencyAnalysisStrategy()
+        self.hybrid_frequency_volatility_strategy = None
+        if self.context.game.strategy == "hybrid_frequency_volatility":
+            self.hybrid_frequency_volatility_strategy = HybridFrequencyVolatilityStrategy()
+        if self.context.game.strategy == "volatility_adaptive":
+            self.volatility_adaptive_strategy = VolatilityAdaptiveStrategy()
+        if self.context.game.strategy == "momentum_oscillator":
+            self.momentum_oscillator_strategy = MomentumOscillatorStrategy()
+        if self.context.game.strategy == "chaos_theory":
+            self.chaos_theory_strategy = ChaosTheoryStrategy()
+        if self.context.game.strategy == "neural_oscillator":
+            self.neural_oscillator_strategy = NeuralOscillatorStrategy()
 
     def execute(self):
         logging.info("State: Finding next bet")
@@ -51,6 +67,68 @@ class FindBetState(State):
             #else:
                 # Keep the current mode when using frequency analysis
                 #new_mode = self.context.game.current_mode
+        elif self.context.game.strategy == "hybrid_frequency_volatility":
+            if self.hybrid_frequency_volatility_strategy is None:
+                self.hybrid_frequency_volatility_strategy = HybridFrequencyVolatilityStrategy()
+
+            # Get bet from frequency analysis strategy
+            next_bet = self.hybrid_frequency_volatility_strategy.get_bet(self.context.game.outcomes)
+            logging.info(f"Hybrid frequency-volatility analysis strategy recommends: {next_bet}")
+            # If strategy returns SKIP, use original strategy as fallback
+            if next_bet == "SKIP":
+                if self.context.game.initial_mode == "PPP":
+                    next_bet = "B"
+                else:
+                    next_bet = "P"
+        elif self.context.game.strategy == "volatility_adaptive":
+            if self.volatility_adaptive_strategy is None:
+                self.volatility_adaptive_strategy = VolatilityAdaptiveStrategy()
+
+            # Get bet from frequency analysis strategy
+            next_bet = self.volatility_adaptive_strategy.get_bet(self.context.game.outcomes)
+            logging.info(f"Volatility adaptive analysis strategy recommends: {next_bet}")
+            # If strategy returns SKIP, use original strategy as fallback
+            if next_bet == "SKIP":
+                if self.context.game.initial_mode == "PPP":
+                    next_bet = "B"
+                else:
+                    next_bet = "P"
+        elif self.context.game.strategy == "momentum_oscillator":
+            if self.momentum_oscillator_strategy is None:
+                self.momentum_oscillator_strategy = MomentumOscillatorStrategy()
+            # Get bet from momentum oscillator strategy
+            next_bet = self.momentum_oscillator_strategy.get_bet(self.context.game.outcomes)
+            logging.info(f"Volatility adaptive analysis strategy recommends: {next_bet}")
+            # If strategy returns SKIP, use original strategy as fallback
+            if next_bet == "SKIP":
+                if self.context.game.initial_mode == "PPP":
+                    next_bet = "B"
+                else:
+                    next_bet = "P"
+        elif self.context.game.strategy == "chaos_theory":
+            if self.chaos_theory_strategy is None:
+                self.chaos_theory_strategy = ChaosTheoryStrategy()
+            # Get bet from chaos theory strategy
+            next_bet = self.chaos_theory_strategy.get_bet(self.context.game.outcomes)
+            logging.info(f"chaos theory strategy recommends: {next_bet}")
+            # If strategy returns SKIP, use original strategy as fallback
+            if next_bet == "SKIP":
+                if self.context.game.initial_mode == "PPP":
+                    next_bet = "B"
+                else:
+                    next_bet = "P"
+        elif self.context.game.strategy == "neural_oscillator":
+            if self.neural_oscillator_strategy is None:
+                self.neural_oscillator_strategy = NeuralOscillatorStrategy()
+            # Get bet from chaos theory strategy
+            next_bet = self.neural_oscillator_strategy.get_bet(self.context.game.outcomes)
+            logging.info(f"Neural oscillator strategy recommends: {next_bet}")
+            # If strategy returns SKIP, use original strategy as fallback
+            if next_bet == "SKIP":
+                if self.context.game.initial_mode == "PPP":
+                    next_bet = "B"
+                else:
+                    next_bet = "P"
         else:
             # Use original strategy
             next_bet, new_mode = play_mode(

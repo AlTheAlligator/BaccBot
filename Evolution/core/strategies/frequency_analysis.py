@@ -30,19 +30,19 @@ class FrequencyAnalysisStrategy:
         params = params or {}
 
         # Default parameters
-        self.short_window = params.get('short_window', 7)  # Short analysis window
-        self.medium_window = params.get('medium_window', 11)  # Medium analysis window
-        self.long_window = params.get('long_window', 19)  # Long analysis window
-        self.min_samples = params.get('min_samples', 6)  # Minimum samples before making predictions
-        self.confidence_threshold = params.get('confidence_threshold', 0.2285)  # Min confidence to place bet
-        self.pattern_length = params.get('pattern_length', 4)  # Length of patterns for conditional frequency analysis
-        self.banker_bias = params.get('banker_bias', 0.0164)  # Slight bias towards banker bets
+        self.short_window = params.get('short_window', 8)  # Short analysis window
+        self.medium_window = params.get('medium_window', 9)  # Medium analysis window
+        self.long_window = params.get('long_window', 35)  # Long analysis window
+        self.min_samples = params.get('min_samples', 4)  # Minimum samples before making predictions
+        self.confidence_threshold = params.get('confidence_threshold', 0.5631578947368421)  # Min confidence to place bet
+        self.pattern_length = params.get('pattern_length', 6)  # Length of patterns for conditional frequency analysis
+        self.banker_bias = params.get('banker_bias', 0.18781632653061225)  # Slight bias towards banker bets
         self.use_trend_adjustment = params.get('use_trend_adjustment', False)  # Whether to adjust for trends
-        self.trend_weight = params.get('trend_weight', 0.4095)  # Weight for trend adjustment factor
-        self.use_pattern_adjustment = params.get('use_pattern_adjustment', True)  # Whether to adjust for pattern frequencies
-        self.pattern_weight = params.get('pattern_weight', 0.2279)  # Weight for pattern adjustment factor
+        self.trend_weight = params.get('trend_weight', 0.5185714285714286)  # Weight for trend adjustment factor
+        self.use_pattern_adjustment = params.get('use_pattern_adjustment', False)  # Whether to adjust for pattern frequencies
+        self.pattern_weight = params.get('pattern_weight', 0.8455102040816326)  # Weight for pattern adjustment factor
         self.use_chi_square = params.get('use_chi_square', False)  # Whether to use chi-square test for significance
-        self.significance_level = params.get('significance_level', 0.8455)  # p-value threshold for significance
+        self.significance_level = params.get('significance_level', 0.01)  # p-value threshold for significance
         self.clustering_method = params.get('clustering_method', 'multi_window')  # Method for frequency clustering
         self.trend_window = params.get('trend_window', 6)  # Window for trend analysis
 

@@ -1,0 +1,42 @@
+Optimized parameters for momentum_oscillator strategy using alligator_fitness fitness function:
+{'short_window': 8, 'long_window': 11, 'min_samples': 7, 'overbought_threshold': 43, 'oversold_threshold': 46, 'signal_line_period': 7, 'reversal_weight': 2.250408163265306, 'trend_weight': 2.555918367346939, 'confidence_threshold': 0.1, 'banker_bias': 0.14720408163265308, 'use_stochastic': True}
+
+Top metrics:
+Fitness: 3.453552120313245
+Sortino Ratio: 0.060
+Total Profit: $15884.45
+Win Rate: 51.76%
+Completion Rate: 63.64%
+Avg Games Per Line: 41.2
+Losing Lines: 25/99 (25.3%)
+Max Drawdown: $1790.10
+Max Closed Drawdown: $1790.10
+Avg Drawdown: $535.63
+Profitable Lines: 74.75%
+Betting Frequency: 120.49%
+
+==================================================
+VALIDATION RESULTS
+==================================================
+Training Fitness: 3.454, Validation Fitness: 1.663
+Training Profit: $15884.45, Validation Profit: $6918.90
+Training Sortino: 0.060, Validation Sortino: 0.062
+
+Detailed Validation Metrics:
+Win Rate: 52.15%
+Completion Rate: 74.42%
+Avg Games Per Line: 40.6
+Losing Lines: 7/43 (16.3%)
+Max Drawdown: $2047.20
+Max Closed Drawdown: $906.40
+Profitable Lines: 83.72%
+
+==================================================
+OVERFITTING ANALYSIS
+==================================================
+POTENTIAL OVERFITTING DETECTED
+The model performs significantly worse on validation data (fitness: 1.663) than on training data (fitness: 3.454)
+Consider using more conservative parameters or collecting more diverse training data.
+
+Fitness Function: alligator_fitness
+Custom fitness function

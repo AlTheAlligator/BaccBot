@@ -49,6 +49,7 @@ class BettingStrategy(Enum):
     SEQUENTIAL_PATTERN_MINING = "sequential_pattern_mining"  # Mine sequential patterns in outcomes
     RECURRENT_NEURAL_NETWORK = "recurrent_neural_network"  # RNN for sequence prediction
     CHAOS_THEORY = "chaos_theory"  # Look for deterministic patterns in seemingly random sequences
+    ADVANCED_CHAOS_THEORY = "chaos_theory_advanced"  # Enhanced chaos theory with additional techniques
     INFORMATION_THEORY = "information_theory"  # Analyze entropy and mutual information in outcomes
     QUANTUM_INSPIRED = "quantum_inspired"  # Apply quantum computing concepts to decision making
     FRACTAL_ANALYSIS = "fractal_analysis"  # Look for self-similar patterns at different scales
@@ -59,3 +60,9 @@ class BettingStrategy(Enum):
     SYMBOLIC_DYNAMICS = "symbolic_dynamics"  # Based on symbolic dynamics from chaos theory
     BAYESIAN_NETWORK = "bayesian_network"  # Uses Bayesian networks to model conditional dependencies
     REINFORCEMENT_META_LEARNING = "reinforcement_meta_learning"  # Learns how to learn from past betting experiences
+    ADAPTIVE_PATTERN_RECOGNITION = "adaptive_pattern_recognition"  # Uses machine learning to identify recurring patterns
+    STATISTICAL_ARBITRAGE = "statistical_arbitrage"  # Exploits statistical inefficiencies in the game
+    CONDITIONAL_PROBABILITY_CHAIN = "conditional_probability_chain"  # Uses Bayesian updating based on conditional probabilities
+    DRIFT_DETECTION = "drift_detection"  # Detects and exploits temporary statistical drifts
+    MULTI_SCALE_MOMENTUM = "multi_scale_momentum"  # Analyzes momentum across different time scales
+    ML_STRATEGY = "ml_strategy"  # Uses machine learning algorithms to predict outcomes

@@ -6,7 +6,7 @@ from core.interaction import random_mouse_move, click_button
 from core.evolution import get_game_result_wrapper
 from core.strategy import check_for_end_line
 from core.nameless import press_new_line_btn, press_win_btn, press_loss_btn, press_tie_btn, press_end_line_btn
-from core.screencapture import get_lobby_btn_coordinates, get_close_running_game_coordinates, capture_nameless_cubes
+from core.screencapture import get_lobby_btn_coordinates, get_close_running_game_coordinates, capture_nameless_cubes, get_home_button_coordinates
 from core.discord_manager import on_line_finish
 from core.ocr import extract_cubes_and_numbers
 from core.gsheets_handler import write_result_line
@@ -15,39 +15,39 @@ class WaitResultState(State):
     def __init__(self, name: str, context):
         super().__init__(name, context)
         self._last_move_time = 0
-        
+
     def execute(self):
         logging.debug("State: Waiting for game result")
         game_result = get_game_result_wrapper()
-        
+
         current_time = time.time()
         if current_time - self._last_move_time > 2:
             random_mouse_move(0.001)
             self._last_move_time = current_time
-        
+
         if game_result != "Waiting for Results":
             self.context.game.game_result = game_result
             return "handle_result"
-            
+
         time.sleep(0.1)
         return None
 
 class HandleResultState(State):
     def __init__(self, name: str, context):
         super().__init__(name, context)
-        
+
     def execute(self):
         logging.info("State: Handling game result")
         game_result = self.context.game.game_result
-            
+
         # Add the new result to our stored outcomes
         self.context.game.outcomes.append(game_result)
-        
+
         # Increment game counter in test mode
         if self.context.test_mode:
             self.context.game_counter += 1
             logging.info(f"Test mode: Game count {self.context.game_counter}")
-        
+
         if game_result == self.context.game.current_bet.side:
             logging.info("Result: Win")
             press_win_btn()
@@ -60,28 +60,29 @@ class HandleResultState(State):
             logging.info("Result: Loss")
             press_loss_btn()
             self.context.game.current_bet.set_result("L")
-            
+
+        time.sleep(0.3) # Allow the GUI to update
         return "check_end"
 
 class CheckEndState(State):
     def __init__(self, name: str, context):
         super().__init__(name, context)
-        
+
     def execute(self):
         logging.info("State: Checking end conditions")
         logging.info(f"PNL: {self.context.get_total_pnl()} with {len(self.context.table.bet_manager.get_all_bets())} bets")
-        
+
         # Use the check_for_end_line function which now properly handles second shoe exit conditions in strategy.py
-        if check_for_end_line(self.context, use_mini_line_exit=False, use_moderate_exit=True):
+        if check_for_end_line(self.context, use_mini_line_exit=False, use_moderate_exit=False):
             logging.info(f"End line condition met: {self.context.game.end_line_reason}")
             return "end_line"
-            
+
         return "find_bet"
 
 class EndLineState(State):
     def __init__(self, name: str, context):
         super().__init__(name, context)
-        
+
     def execute(self):
         logging.info("State: Ending line")
         # Store cube count before ending the line if the shoe is finished
@@ -92,13 +93,20 @@ class EndLineState(State):
             logging.info(f"Stored cube count before ending line: {cube_count}, values: {extracted_numbers}")
             # Store first shoe drawdown for reference
             self.context.game.first_shoe_drawdown = self.context.get_total_pnl()
-        
+
         on_line_finish(self.context.get_total_pnl(), self.context.game.end_line_reason, self.context.game.is_second_shoe)
         self.context.export_line_to_csv()
-        
+
         # Write results to Google Sheets
         write_result_line(self.context)
-        
+
+        # Check if we should exit due to time limit
+        if self.context.should_exit_after_time_limit():
+            logging.info(f"Time limit of {self.context.minutes_to_run} minutes reached. Exiting after line completion.")
+            self.context.stop_event.set()
+            time.sleep(1)
+            return "end_session"
+
         # In natural shoe finish, start a new shoe instead of going to second shoe mode
         if self.context.game.end_line_reason != "Shoe finished":
             press_end_line_btn()
@@ -108,47 +116,66 @@ class EndLineState(State):
             logging.info("Shoe finished, starting a new shoe")
             # Reset for new shoe
             self.context.reset_table()
-            
+
         press_new_line_btn()
-            
+
         return "leave_table"
 
 class LeaveTableState(State):
     def __init__(self, name: str, context):
         super().__init__(name, context)
-        
+
     def execute(self):
         logging.info("State: Leaving table")
-        
+
         # If in second shoe mode, exit the program
         if self.context.game.is_second_shoe and self.context.game.end_line_reason != "":
             logging.info("Second shoe completed, exiting...")
             self.context.stop_event.set()
             return None
-            
+
         click_button(get_lobby_btn_coordinates())
         time.sleep(random.uniform(3, 4))
         click_button(get_close_running_game_coordinates())
         return "lobby"
 
+class EndSessionState(State):
+    def __init__(self, name: str, context):
+        super().__init__(name, context)
+
+    def execute(self):
+        logging.info("State: Ending session and returning to home screen")
+        # Click the home button to return to the home screen
+        home_button = get_home_button_coordinates()
+        if home_button:
+            click_button(home_button)
+            logging.info("Clicked home button to return to home screen")
+            time.sleep(random.uniform(2, 3))
+        else:
+            logging.warning("Could not find home button coordinates")
+
+        # Exit the program
+        logging.info("Session ended due to time limit")
+        return None
+
 class WaitNextGameState(State):
     def __init__(self, name: str, context):
         super().__init__(name, context)
         self._last_move_time = 0
-        
+
     def execute(self):
         logging.debug("State: Waiting for next game")
         game_result = get_game_result_wrapper()
-        
+
         current_time = time.time()
         if current_time - self._last_move_time > 2:
             random_mouse_move(0.001)
             self._last_move_time = current_time
-        
+
         if game_result != "Waiting for Results":
             # Always append outcomes as we need them for strategy
             self.context.game.outcomes.append(game_result)
             return "find_bet"
-            
+
         time.sleep(0.1)
         return None

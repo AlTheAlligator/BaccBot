@@ -1,0 +1,40 @@
+Optimized parameters for neural_oscillator strategy using robust fitness function:
+{'num_oscillators': 8, 'coupling_strength': 0.8818367346938776, 'adaptation_rate': 0.38326530612244897, 'resonance_threshold': 0.2142857142857143, 'phase_sync_threshold': 0.7040816326530612, 'min_samples': 7, 'banker_bias': 0.021052631578947368, 'phases': 5.618947368421053}
+
+Top metrics:
+Fitness: 0.5377087932152979
+Sortino Ratio: 0.125
+Total Profit: $12151.85
+Win Rate: 54.65%
+Completion Rate: 94.95%
+Avg Games Per Line: 25.8
+Losing Lines: 5.0/99.0 (5.1%)
+Max Drawdown: $1085.50
+Max Closed Drawdown: $1085.50
+Avg Drawdown: $199.49
+Profitable Lines: 94.95%
+Betting Frequency: 137.16%
+
+==================================================
+VALIDATION RESULTS
+==================================================
+Training Fitness: 0.538, Validation Fitness: 0.501
+Training Profit: $12151.85, Validation Profit: $4793.50
+Training Sortino: 0.125, Validation Sortino: 0.099
+
+Detailed Validation Metrics:
+Win Rate: 53.23%
+Completion Rate: 97.67%
+Avg Games Per Line: 27.3
+Losing Lines: 2/43 (4.7%)
+Max Drawdown: $1322.00
+Max Closed Drawdown: $1322.00
+Profitable Lines: 95.35%
+
+==================================================
+OVERFITTING ANALYSIS
+==================================================
+Model generalizes well to validation data.
+
+Fitness Function: robust
+Focus on consistency and risk management, heavily penalizes drawdowns and losing lines

@@ -32,9 +32,10 @@ def main():
     parser.add_argument('-s', '--second-shoe', action='store_true', help='Run in second shoe mode')
     parser.add_argument('-d', '--drawdown', type=float, help='Current drawdown value (will be converted to negative)')
     parser.add_argument('-t', '--test-mode', action='store_true', help='Run in test mode: place minimal bets every 3rd game only')
-    parser.add_argument('--strategy', choices=['original', 'frequency_analysis'], default='original',
+    parser.add_argument('--strategy', choices=['original', 'frequency_analysis', 'hybrid_frequency_volatility', 'volatility_adaptive', 'momentum_oscillator', 'chaos_theory', 'neural_oscillator'], default='original',
                       help='Betting strategy to use (default: original)')
     parser.add_argument('--debug', action='store_true', help='Run in debug mode: save screenshots to disk for debugging')
+    parser.add_argument('-m', '--minutes', type=int, help='Run for specified number of minutes and exit after current line completes')
     args = parser.parse_args()
 
     if args.second_shoe and args.drawdown is None:
@@ -55,6 +56,16 @@ def main():
 
     if args.strategy == 'frequency_analysis':
         logging.info("Running with frequency analysis strategy")
+    elif args.strategy == 'hybrid_frequency_volatility':
+        logging.info("Running with hybrid frequency-volatility strategy")
+    elif args.strategy == 'volatility_adaptive':
+        logging.info("Running with volatility adaptive strategy")
+    elif args.strategy == 'momentum_oscillator':
+        logging.info("Running with momentum oscillator strategy")
+    elif args.strategy == 'chaos_theory':
+        logging.info("Running with chaos theory strategy")
+    elif args.strategy == 'neural_oscillator':
+        logging.info("Running with neural oscillator strategy")
     else:
         logging.info("Running with original strategy")
 
@@ -65,11 +76,15 @@ def main():
     if args.debug:
         logging.info("Running in debug mode: screenshots will be saved to disk")
 
+    # Log minutes to run if specified
+    if args.minutes:
+        logging.info(f"Bot will run for {args.minutes} minutes and exit after current line completes")
+
     try:
-        # Initialize and run state machine with second shoe flag, drawdown, and strategy
+        # Initialize and run state machine with second shoe flag, drawdown, strategy, and minutes to run
         state_machine = BaccaratStateMachine(stop_event, is_second_shoe=args.second_shoe,
                                             initial_drawdown=args.drawdown, test_mode=args.test_mode,
-                                            strategy=args.strategy)
+                                            strategy=args.strategy, minutes_to_run=args.minutes)
         state_machine.run()
     except KeyboardInterrupt:
         logging.info("Keyboard interrupt received, stopping...")

@@ -1,0 +1,42 @@
+Optimized parameters for multi_scale_momentum strategy using alligator_fitness fitness function:
+{'short_window': 4, 'medium_window': 6, 'long_window': 9, 'banker_bias': 0.16842105263157894, 'min_samples': 4, 'overbought_threshold': 0.4, 'oversold_threshold': 0.55, 'trend_threshold': 0.23894736842105263, 'divergence_threshold': 0.3194736842105263, 'use_rsi': True, 'use_macd': False, 'use_stochastic': False, 'rsi_weight': 0.7736842105263158, 'macd_weight': 0.31052631578947365, 'stochastic_weight': 0.4789473684210527}
+
+Top metrics:
+Fitness: 3.1898271184032305
+Sortino Ratio: 0.054
+Total Profit: $14566.05
+Win Rate: 52.07%
+Completion Rate: 73.74%
+Avg Games Per Line: 40.3
+Losing Lines: 20/99 (20.2%)
+Max Drawdown: $2656.30
+Max Closed Drawdown: $2656.30
+Avg Drawdown: $559.98
+Profitable Lines: 79.80%
+Betting Frequency: 121.04%
+
+==================================================
+VALIDATION RESULTS
+==================================================
+Training Fitness: 3.190, Validation Fitness: 1.061
+Training Profit: $14566.05, Validation Profit: $3978.70
+Training Sortino: 0.054, Validation Sortino: 0.034
+
+Detailed Validation Metrics:
+Win Rate: 51.03%
+Completion Rate: 62.79%
+Avg Games Per Line: 41.2
+Losing Lines: 10/43 (23.3%)
+Max Drawdown: $2658.20
+Max Closed Drawdown: $1399.75
+Profitable Lines: 76.74%
+
+==================================================
+OVERFITTING ANALYSIS
+==================================================
+POTENTIAL OVERFITTING DETECTED
+The model performs significantly worse on validation data (fitness: 1.061) than on training data (fitness: 3.190)
+Consider using more conservative parameters or collecting more diverse training data.
+
+Fitness Function: alligator_fitness
+Custom fitness function

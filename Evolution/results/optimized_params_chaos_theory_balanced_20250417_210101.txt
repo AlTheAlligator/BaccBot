@@ -1,0 +1,42 @@
+Optimized parameters for chaos_theory strategy using balanced fitness function:
+{'embedding_dimension': 3, 'time_delay': 12, 'prediction_horizon': 10, 'num_neighbors': 13, 'min_samples': 3, 'banker_bias': 0.08888888888888889}
+
+Top metrics:
+Fitness: 2.9207651198908655
+Sortino Ratio: 0.046
+Total Profit: $13239.95
+Win Rate: 51.35%
+Completion Rate: 67.68%
+Avg Games Per Line: 42.7
+Losing Lines: 21/99 (21.2%)
+Max Drawdown: $1939.65
+Max Closed Drawdown: $1194.25
+Avg Drawdown: $555.96
+Profitable Lines: 78.79%
+Betting Frequency: 119.58%
+
+==================================================
+VALIDATION RESULTS
+==================================================
+Training Fitness: 2.921, Validation Fitness: 0.914
+Training Profit: $13239.95, Validation Profit: $3247.05
+Training Sortino: 0.046, Validation Sortino: 0.025
+
+Detailed Validation Metrics:
+Win Rate: 51.87%
+Completion Rate: 67.44%
+Avg Games Per Line: 41.0
+Losing Lines: 9/43 (20.9%)
+Max Drawdown: $2336.25
+Max Closed Drawdown: $2009.00
+Profitable Lines: 79.07%
+
+==================================================
+OVERFITTING ANALYSIS
+==================================================
+POTENTIAL OVERFITTING DETECTED
+The model performs significantly worse on validation data (fitness: 0.914) than on training data (fitness: 2.921)
+Consider using more conservative parameters or collecting more diverse training data.
+
+Fitness Function: balanced
+Balanced approach that considers profit, Sortino ratio, win rate, and completion rate

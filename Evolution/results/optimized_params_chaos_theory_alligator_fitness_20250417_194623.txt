@@ -1,0 +1,42 @@
+Optimized parameters for chaos_theory strategy using alligator_fitness fitness function:
+{'embedding_dimension': 4, 'time_delay': 8, 'prediction_horizon': 12, 'num_neighbors': 13, 'min_samples': 3, 'banker_bias': 0.0}
+
+Top metrics:
+Fitness: 3.1321591523056473
+Sortino Ratio: 0.050
+Total Profit: $14301.05
+Win Rate: 51.39%
+Completion Rate: 61.62%
+Avg Games Per Line: 42.5
+Losing Lines: 23/99 (23.2%)
+Max Drawdown: $2345.75
+Max Closed Drawdown: $1736.00
+Avg Drawdown: $564.04
+Profitable Lines: 76.77%
+Betting Frequency: 119.73%
+
+==================================================
+VALIDATION RESULTS
+==================================================
+Training Fitness: 3.132, Validation Fitness: 1.553
+Training Profit: $14301.05, Validation Profit: $6386.90
+Training Sortino: 0.050, Validation Sortino: 0.050
+
+Detailed Validation Metrics:
+Win Rate: 52.19%
+Completion Rate: 62.79%
+Avg Games Per Line: 41.0
+Losing Lines: 7/43 (16.3%)
+Max Drawdown: $2725.15
+Max Closed Drawdown: $2009.00
+Profitable Lines: 83.72%
+
+==================================================
+OVERFITTING ANALYSIS
+==================================================
+POTENTIAL OVERFITTING DETECTED
+The model performs significantly worse on validation data (fitness: 1.553) than on training data (fitness: 3.132)
+Consider using more conservative parameters or collecting more diverse training data.
+
+Fitness Function: alligator_fitness
+Custom fitness function

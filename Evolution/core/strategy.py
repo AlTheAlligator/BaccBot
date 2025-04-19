@@ -426,10 +426,10 @@ def check_for_end_line(context, use_mini_line_exit = False, use_moderate_exit = 
         cube_count, extracted_numbers = extract_cubes_and_numbers(capture_nameless_cubes())
 
     # General rule 4: If you have hit 3 or more bad streaks and are in profit, end line
-    if not is_simulation and current_pnl >= -50 and bad_streaks_threshold_hit(context, 3) and cube_count <= 4:
-        if cube_threshold_hit(50, 50, 3, cube_count=cube_count, extracted_numbers=extracted_numbers):
-            context.game.end_line_reason = "3+ bad streak, at least -50 profit and less than 3 cubes"
-            return True
+    #if not is_simulation and current_pnl >= -50 and bad_streaks_threshold_hit(context, 3) and cube_count <= 4:
+    #    if cube_threshold_hit(50, 50, 3, cube_count=cube_count, extracted_numbers=extracted_numbers):
+    #        context.game.end_line_reason = "3+ bad streak, at least -50 profit and less than 3 cubes"
+    #        return True
 
     if use_mini_line_exit:
         if check_for_mini_line_exit(context, cube_count, extracted_numbers):

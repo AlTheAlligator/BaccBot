@@ -32,7 +32,8 @@ class LobbyState(State):
         time.sleep(random.uniform(0.5, 1))
         
         # Find and analyze tables
-        self.context.game.bias = find_lobby_bias()
+        #self.context.game.bias = find_lobby_bias()
+        self.context.game.bias = ""
         if self.context.game.is_second_shoe:
             if self.context.game.bias == "P":
                 logging.info("Exiting: Bias is Player in second shoe.")

@@ -1,0 +1,42 @@
+Optimized parameters for neural_oscillator strategy using alligator_fitness fitness function:
+{'num_oscillators': 4, 'coupling_strength': 0.1553061224489796, 'adaptation_rate': 0.49163265306122444, 'resonance_threshold': 0.44285714285714284, 'phase_sync_threshold': 0.2469387755102041, 'min_samples': 4, 'banker_bias': 0.2, 'phases': [3.466575304172473, 2.919631674093282, 5.797011642642298, 2.9660431842473955]}
+
+Top metrics:
+Fitness: 3.6826760216712224
+Sortino Ratio: 0.069
+Total Profit: $16984.35
+Win Rate: 53.02%
+Completion Rate: 67.68%
+Avg Games Per Line: 39.2
+Losing Lines: 22/99 (22.2%)
+Max Drawdown: $2634.20
+Max Closed Drawdown: $1006.65
+Avg Drawdown: $451.72
+Profitable Lines: 77.78%
+Betting Frequency: 121.74%
+
+==================================================
+VALIDATION RESULTS
+==================================================
+Training Fitness: 3.683, Validation Fitness: 1.275
+Training Profit: $16984.35, Validation Profit: $5042.70
+Training Sortino: 0.069, Validation Sortino: 0.038
+
+Detailed Validation Metrics:
+Win Rate: 51.10%
+Completion Rate: 67.44%
+Avg Games Per Line: 41.9
+Losing Lines: 12/43 (27.9%)
+Max Drawdown: $2758.20
+Max Closed Drawdown: $1761.70
+Profitable Lines: 72.09%
+
+==================================================
+OVERFITTING ANALYSIS
+==================================================
+POTENTIAL OVERFITTING DETECTED
+The model performs significantly worse on validation data (fitness: 1.275) than on training data (fitness: 3.683)
+Consider using more conservative parameters or collecting more diverse training data.
+
+Fitness Function: alligator_fitness
+Custom fitness function

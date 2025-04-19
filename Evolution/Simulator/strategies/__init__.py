@@ -36,6 +36,7 @@ from .time_series_forecasting import TimeSeriesForecastingStrategy
 from .monte_carlo_simulation import MonteCarloSimulationStrategy
 from .transfer_learning import TransferLearningStrategy
 from .chaos_theory import ChaosTheoryStrategy
+from .chaos_theory_advanced import ChaosTheoryAdvancedStrategy
 from .information_theory import InformationTheoryStrategy
 from .quantum_inspired import QuantumInspiredStrategy
 from .fractal_analysis import FractalAnalysisStrategy
@@ -45,6 +46,12 @@ from .adaptive_momentum import AdaptiveMomentumStrategy
 from .symbolic_dynamics import SymbolicDynamicsStrategy
 from .bayesian_network import BayesianNetworkStrategy
 from .reinforcement_meta_learning import ReinforcementMetaLearningStrategy
+from .adaptive_pattern_recognition import AdaptivePatternRecognitionStrategy
+from .statistical_arbitrage import StatisticalArbitrageStrategy
+from .conditional_probability_chain import ConditionalProbabilityChainStrategy
+from .drift_detection import DriftDetectionStrategy
+from .multi_scale_momentum import MultiScaleMomentumStrategy
+from .ml_strategy import MlStrategyStrategy
 
 # Import the BettingStrategy enum
 from .betting_strategy import BettingStrategy

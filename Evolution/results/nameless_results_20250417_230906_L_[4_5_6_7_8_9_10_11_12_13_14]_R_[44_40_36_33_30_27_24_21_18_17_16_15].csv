@@ -1,0 +1,2 @@
+Strategy,Description,Total Bets,Win Rate,Total Profit,Commission Paid,Sharpe Ratio,Sortino Ratio,Max Consecutive Wins,Max Consecutive Losses,Betting Frequency %,Lines Completed,Lines Active,Total Lines,Completion Rate %,Profit Per Line,Profit Per Bet,Profit Per Completed Line
+chaos_theory,Default parameters,5773,52.08,20036.05,8295.95,0.037,0.053,9,9,100.0,91,51,142,64.08,141.1,3.47,220.18

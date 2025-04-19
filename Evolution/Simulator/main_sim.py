@@ -300,7 +300,7 @@ def get_initial_outcomes_count(outcomes):
 
     # Count ties in first 6 outcomes
     ties_in_first_six = outcomes[:6].count('T')
-    return 7 if ties_in_first_six > 0 else 6
+    return 9 if ties_in_first_six > 0 else 8
 
 def play_mode(current_mode, outcomes, initial_mode, last_bet, four_start):
     """
@@ -2097,7 +2097,9 @@ if __name__ == "__main__":
         BettingStrategy.SYMBOLIC_DYNAMICS,
         BettingStrategy.BAYESIAN_NETWORK,
         BettingStrategy.REINFORCEMENT_META_LEARNING,
-        BettingStrategy.HYBRID_FREQUENCY_VOLATILITY
+        BettingStrategy.HYBRID_FREQUENCY_VOLATILITY,
+        BettingStrategy.CHAOS_THEORY,
+        BettingStrategy.ADVANCED_CHAOS_THEORY
     ]
 
     # --- Load historical data ONCE ---

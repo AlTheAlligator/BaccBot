@@ -61,12 +61,16 @@ class TableContext:
 
 class StateMachineContext:
     """Main context object that holds all state machine context"""
-    def __init__(self, stop_event: Event, is_second_shoe: bool = False, initial_drawdown: float = None, test_mode: bool = False, strategy: str = "original"):
+    def __init__(self, stop_event: Event, is_second_shoe: bool = False, initial_drawdown: float = None, test_mode: bool = False, strategy: str = "original", minutes_to_run: int = None):
         self.stop_event = stop_event
         self.game = GameContext(is_second_shoe=is_second_shoe, strategy=strategy)
         self.table = TableContext()
         self.test_mode = test_mode
         self.game_counter = 0
+
+        # Timer for auto-exit after specified minutes
+        self.minutes_to_run = minutes_to_run
+        self.start_time = datetime.now() if minutes_to_run is not None else None
 
         # Initialize bet manager with initial drawdown for second shoe
         if is_second_shoe and initial_drawdown is not None:
@@ -126,6 +130,14 @@ class StateMachineContext:
         self.game.first_shoe_outcomes = self.game.outcomes.copy()
         self.game.outcomes = []  # Reset outcomes when switching tables
         self.game.first_shoe_drawdown = self.get_total_pnl()
+
+    def should_exit_after_time_limit(self) -> bool:
+        """Check if the bot should exit after reaching the time limit"""
+        if self.minutes_to_run is None or self.start_time is None:
+            return False
+
+        elapsed_minutes = (datetime.now() - self.start_time).total_seconds() / 60
+        return elapsed_minutes >= self.minutes_to_run
 
     def export_line_to_csv(self):
         """Exports the finished line data to a CSV file"""

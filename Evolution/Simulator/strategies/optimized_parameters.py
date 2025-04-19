@@ -119,20 +119,8 @@ OPTIMIZED_PARAMETERS = {
     
     # Volatility Adaptive Strategy - adjusts approach based on volatility
     "volatility_adaptive": {
-        "short_window": 6,
-        "medium_window": 12,
-        "long_window": 42,
-        "min_samples": 3,
-        "high_volatility_threshold": 0.76,
-        "low_volatility_threshold": 0.1,
-        "confidence_threshold_base": 0.48,
-        "confidence_scaling": 0.35,
-        "banker_bias": 0.0163,
-        "use_adaptive_window": True,
-        "statistical_mode": "combined",
-        "pattern_length": 4,
-        "min_pattern_occurrences": 6
-    },
+        'short_window': 5, 'medium_window': 10, 'long_window': 56, 'min_samples': 6, 'high_volatility_threshold': 0.5842105263157895, 'low_volatility_threshold': 0.22631578947368422, 'confidence_threshold_base': 0.6105263157894738, 'confidence_scaling': 0.5, 'banker_bias': 0.016938775510204084, 'use_adaptive_window': False, 'statistical_mode': 'combined', 'pattern_length': 5, 'min_pattern_occurrences': 3}
+    ,
     
     # Bayesian Inference Strategy - updates probabilities with Bayes' rule
     "bayesian_inference": {
@@ -246,44 +234,56 @@ OPTIMIZED_PARAMETERS = {
     },
     # Add to OPTIMIZED_PARAMETERS dictionary
     "hybrid_frequency_volatility": {
-        "performance_window": 6,
-        "min_confidence_diff": 0.05,
-        "performance_weight": 0.5,
-        "confidence_weight": 0.5,
-        # Frequency Analysis specific parameters
-        "frequency_params": {
-            "short_window": 7,
-            "medium_window": 11,
-            "long_window": 19,
-            "min_samples": 6,
-            "confidence_threshold": 0.2285,
-            "pattern_length": 4,
-            "banker_bias": 0.0164,
-            "use_trend_adjustment": False,
-            "trend_weight": 0.4095,
-            "use_pattern_adjustment": True,
-            "pattern_weight": 0.2279,
-            "use_chi_square": False,
-            "significance_level": 0.8455,
-            "clustering_method": "multi_window"
-        },
-        # Volatility Adaptive specific parameters
-        "volatility_params": {
-            "short_window": 6,
-            "medium_window": 12,
-            "long_window": 42,
-            "min_samples": 3,
-            "high_volatility_threshold": 0.76,
-            "low_volatility_threshold": 0.1,
-            "confidence_threshold_base": 0.48,
-            "confidence_scaling": 0.35,
-            "banker_bias": 0.0163,
-            "use_adaptive_window": True,
-            "statistical_mode": "combined",
-            "pattern_length": 4,
-            "min_pattern_occurrences": 6
+        'performance_window': 17, 
+        'min_confidence_diff': 0.14, 
+        'performance_weight': 0.28244897959183674, 
+        'confidence_weight': 0.3914285714285714, 
+        'frequency_params': 
+        {
+            'short_window': 7, 
+            'medium_window': 11, 
+            'long_window': 19, 
+            'min_samples': 6, 
+            'confidence_threshold': 0.31052631578947365, 
+            'pattern_length': 2, 
+            'banker_bias': 0.001, 
+            'use_trend_adjustment': True, 
+            'trend_weight': 0.9, 
+            'use_pattern_adjustment': False, 
+            'pattern_weight': 0.8531578947368421, 
+            'use_chi_square': True, 
+            'significance_level': 0.10368421052631578, 
+            'clustering_method': 'clustering_method'
+        }, 
+        'volatility_params': 
+        {
+            'short_window': 3, 
+            'medium_window': 8, 
+            'long_window': 18, 
+            'min_samples': 5, 
+            'high_volatility_threshold': 0.5210526315789474, 
+            'low_volatility_threshold': 0.4789473684210527, 
+            'confidence_threshold_base': 0.3263157894736842, 
+            'confidence_scaling': 0.5, 
+            'banker_bias': 0.02, 
+            'use_adaptive_window': True, 
+            'statistical_mode': 'frequency', 
+            'pattern_length': 6, 
+            'min_pattern_occurrences': 5
         }
+    },
+    "neural_oscillator": 
+    {
+        'num_oscillators': 10, 
+        'coupling_strength': 0.17346938775510204, 
+        'adaptation_rate': 0.5638775510204082, 
+        'resonance_threshold': 0.37755102040816324, 
+        'phase_sync_threshold': 0.3122448979591837, 
+        'min_samples': 4, 
+        'banker_bias': 0.10526315789473684, 
+        'phases': [3.497356267915043, 2.079982724598674, 1.5025799854356623, 3.0395457838984394, 4.274668208450234, 1.0993834171549892, 1.9051589295570905, 4.637798869350713, 3.130793366247823, 2.255587705529264]
     }
+,
 }
 
 # Ensemble strategy that combines multiple meta-strategies

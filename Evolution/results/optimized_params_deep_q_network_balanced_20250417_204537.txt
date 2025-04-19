@@ -1,0 +1,40 @@
+Optimized parameters for deep_q_network strategy using balanced fitness function:
+{'learning_rate': 0.14757142857142858, 'discount_factor': 0.7642857142857142, 'exploration_rate': 0.07020408163265306, 'batch_size': 146, 'memory_size': 838}
+
+Top metrics:
+Fitness: 1.302568330308722
+Sortino Ratio: 0.019
+Total Profit: $5259.85
+Win Rate: 52.08%
+Completion Rate: 63.64%
+Avg Games Per Line: 38.8
+Losing Lines: 28/99 (28.3%)
+Max Drawdown: $3095.40
+Max Closed Drawdown: $1491.45
+Avg Drawdown: $571.36
+Profitable Lines: 71.72%
+Betting Frequency: 122.01%
+
+==================================================
+VALIDATION RESULTS
+==================================================
+Training Fitness: 1.303, Validation Fitness: 2.402
+Training Profit: $5259.85, Validation Profit: $10413.05
+Training Sortino: 0.019, Validation Sortino: 0.088
+
+Detailed Validation Metrics:
+Win Rate: 53.79%
+Completion Rate: 76.74%
+Avg Games Per Line: 38.8
+Losing Lines: 5/43 (11.6%)
+Max Drawdown: $1861.75
+Max Closed Drawdown: $1333.90
+Profitable Lines: 88.37%
+
+==================================================
+OVERFITTING ANALYSIS
+==================================================
+Model generalizes well to validation data.
+
+Fitness Function: balanced
+Balanced approach that considers profit, Sortino ratio, win rate, and completion rate

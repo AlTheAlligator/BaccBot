@@ -5,14 +5,14 @@ from core.state_machine.analysis_states import InitialAnalysisState, InitializeL
 from core.state_machine.betting_states import FindBetState, WaitBetState, PlaceBetState
 from core.state_machine.result_states import (
     WaitResultState, HandleResultState, CheckEndState,
-    EndLineState, LeaveTableState, WaitNextGameState
+    EndLineState, LeaveTableState, WaitNextGameState, EndSessionState
 )
 from core.state_machine.context import StateMachineContext
 
 class BaccaratStateMachine(StateMachine):
-    def __init__(self, stop_event, is_second_shoe=False, initial_drawdown=None, test_mode=False, strategy="original"):
+    def __init__(self, stop_event, is_second_shoe=False, initial_drawdown=None, test_mode=False, strategy="original", minutes_to_run=None):
         self.stop_event = stop_event
-        context = StateMachineContext(stop_event, is_second_shoe, initial_drawdown, test_mode, strategy)
+        context = StateMachineContext(stop_event, is_second_shoe, initial_drawdown, test_mode, strategy, minutes_to_run)
         initial_state = 'prepare_second_shoe' if is_second_shoe else 'lobby'
         super().__init__(initial_state, context)
 
@@ -31,7 +31,8 @@ class BaccaratStateMachine(StateMachine):
             'handle_result': HandleResultState('handle_result', self.context),
             'check_end': CheckEndState('check_end', self.context),
             'end_line': EndLineState('end_line', self.context),
-            'leave_table': LeaveTableState('leave_table', self.context)
+            'leave_table': LeaveTableState('leave_table', self.context),
+            'end_session': EndSessionState('end_session', self.context)
         }
 
     def run(self):

@@ -1,0 +1,2 @@
+Strategy,Description,Total Bets,Win Rate,Total Profit,Commission Paid,Sharpe Ratio,Sortino Ratio,Max Consecutive Wins,Max Consecutive Losses,Betting Frequency %,Lines Completed,Lines Active,Total Lines,Completion Rate %,Profit Per Line,Profit Per Bet,Profit Per Completed Line
+neural_oscillator,Default parameters,3032,52.65,14302.7,1983.3,0.053,0.079,6,9,100.0,138,4,142,97.18,100.72,4.72,103.64

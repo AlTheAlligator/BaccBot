@@ -25,17 +25,17 @@ class MomentumOscillatorStrategy(BaseStrategy):
         super().__init__(simulator, params)
         
         # Default parameters
-        self.short_window = params.get('short_window', 5)  # Fast moving average window
-        self.long_window = params.get('long_window', 14)  # Slow moving average window
-        self.min_samples = params.get('min_samples', max(self.long_window, 15))  # Minimum samples before making predictions
-        self.overbought_threshold = params.get('overbought_threshold', 70)  # Threshold for overbought condition (0-100)
-        self.oversold_threshold = params.get('oversold_threshold', 30)  # Threshold for oversold condition (0-100)
-        self.signal_line_period = params.get('signal_line_period', 3)  # Period for signal line calculation
-        self.reversal_weight = params.get('reversal_weight', 1.0)  # Weight for reversal signals (0-1)
-        self.trend_weight = params.get('trend_weight', 1.0)  # Weight for trend continuation signals (0-1)
-        self.confidence_threshold = params.get('confidence_threshold', 0.6)  # Min confidence to place bet
-        self.banker_bias = params.get('banker_bias', 0.01)  # Slight bias towards banker bets
-        self.use_stochastic = params.get('use_stochastic', True)  # Whether to use stochastic oscillator in addition to RSI
+        self.short_window = params.get('short_window', 8)  # Fast moving average window
+        self.long_window = params.get('long_window', 17)  # Slow moving average window
+        self.min_samples = params.get('min_samples', 3)  # Minimum samples before making predictions
+        self.overbought_threshold = params.get('overbought_threshold', 42)  # Threshold for overbought condition (0-100)
+        self.oversold_threshold = params.get('oversold_threshold', 70)  # Threshold for oversold condition (0-100)
+        self.signal_line_period = params.get('signal_line_period', 5)  # Period for signal line calculation
+        self.reversal_weight = params.get('reversal_weight', 3.2687755102040814)  # Weight for reversal signals (0-1)
+        self.trend_weight = params.get('trend_weight', 4.59265306122449)  # Weight for trend continuation signals (0-1)
+        self.confidence_threshold = params.get('confidence_threshold', 0.29591836734693877)  # Min confidence to place bet
+        self.banker_bias = params.get('banker_bias', 0.1959387755102041)  # Slight bias towards banker bets
+        self.use_stochastic = params.get('use_stochastic', False)  # Whether to use stochastic oscillator in addition to RSI
         
         # Initialize oscillator values
         self.rsi_values = deque(maxlen=50)  # Recent RSI values

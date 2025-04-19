@@ -1,0 +1,42 @@
+Optimized parameters for multi_scale_momentum strategy using balanced fitness function:
+{'short_window': 4, 'medium_window': 6, 'long_window': 9, 'banker_bias': 0.18947368421052632, 'min_samples': 5, 'overbought_threshold': 0.4578947368421053, 'oversold_threshold': 0.5026315789473685, 'trend_threshold': 0.20842105263157895, 'divergence_threshold': 0.37105263157894736, 'use_rsi': True, 'use_macd': False, 'use_stochastic': False, 'rsi_weight': 0.31052631578947365, 'macd_weight': 0.6473684210526316, 'stochastic_weight': 0.6894736842105262}
+
+Top metrics:
+Fitness: 3.5999495204170113
+Sortino Ratio: 0.063
+Total Profit: $16568.00
+Win Rate: 52.13%
+Completion Rate: 69.70%
+Avg Games Per Line: 40.4
+Losing Lines: 18/99 (18.2%)
+Max Drawdown: $2740.50
+Max Closed Drawdown: $1715.25
+Avg Drawdown: $548.21
+Profitable Lines: 81.82%
+Betting Frequency: 120.98%
+
+==================================================
+VALIDATION RESULTS
+==================================================
+Training Fitness: 3.600, Validation Fitness: 0.958
+Training Profit: $16568.00, Validation Profit: $3535.40
+Training Sortino: 0.063, Validation Sortino: 0.029
+
+Detailed Validation Metrics:
+Win Rate: 51.30%
+Completion Rate: 62.79%
+Avg Games Per Line: 40.6
+Losing Lines: 9/43 (20.9%)
+Max Drawdown: $2478.50
+Max Closed Drawdown: $1747.65
+Profitable Lines: 79.07%
+
+==================================================
+OVERFITTING ANALYSIS
+==================================================
+POTENTIAL OVERFITTING DETECTED
+The model performs significantly worse on validation data (fitness: 0.958) than on training data (fitness: 3.600)
+Consider using more conservative parameters or collecting more diverse training data.
+
+Fitness Function: balanced
+Balanced approach that considers profit, Sortino ratio, win rate, and completion rate
